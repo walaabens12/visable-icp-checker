@@ -386,17 +386,29 @@ YOUR TASK: Classify this company according to these ICP criteria:
 1. INDUSTRY - Match to industries from this list (can be MULTIPLE, but LIMIT TO 5 MAX):
 ${icpIndustries.map((ind, idx) => `${idx + 1}. ${ind}`).join('\n')}
 
-IMPORTANT: 
-- Search ALL fields: Industry, Description, Categories, AND Keywords
-- List up to 5 industries if multiple truly apply (semicolon-separated)
-- If no good match exists, use format: "Other: [original industry name]"
-- Only list multiple if genuinely applicable (not just loosely related)
-- Pay special attention to German terms:
+IMPORTANT MATCHING RULES:
+- **PRIMARY SOURCE**: Company Description and Keywords fields - these are most reliable
+- **SECONDARY SOURCE**: Industry field and Categories (if provided)
+- Match based on the CORE BUSINESS ACTIVITY described, not tangential mentions
+- "Engineering programs" ≠ "Mechanical engineering" (education vs manufacturing)
+- "Nursing training" ≠ "Medical equipment" (education vs products)
+- Focus on WHAT THEY DO, not what they teach/serve
+- Only list multiple industries if the company genuinely operates in multiple sectors
+- If primarily one sector, list ONLY that one
+
+EXAMPLES:
+- "Educational institution offering engineering programs" → ONLY "Training and education" (NOT Mechanical engineering)
+- "Manufacturer of metal products, also offers training" → "Metal and metal products; Training and education"
+- "Nursing school" → ONLY "Training and education" (NOT healthcare products)
+- "Food manufacturer that runs culinary academy" → "Food technology; Training and education"
+
+Pay special attention to German terms:
   * "Glas" / "Schauglas" / "Sichtglas" = Glass and ceramic products
   * "Armaturen" = Valve technology or fittings
   * "Behälter" = Containers
   * "Anlagen" = Plant construction
   * "Maschinen" = Machinery
+  * "Ausbildung" / "Schulung" = Training and education
 
 2. SUPPLIER TYPE - Choose ALL that truly apply (semicolon-separated if multiple):
 - Manufacturer (produces/manufactures products)
@@ -590,6 +602,13 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     console.log('🔍 Searching in text:', searchText.substring(0, 200));
     
+    // Check if this is primarily an educational/training institution
+    const isEducation = descLower.includes('education') || descLower.includes('training') || 
+                        descLower.includes('school') || descLower.includes('college') ||
+                        descLower.includes('academy') || descLower.includes('university') ||
+                        descLower.includes('ausbildung') || descLower.includes('schulung') ||
+                        descLower.includes('weiterbildung') || descLower.includes('bildung');
+    
     const industryKeywordMap = {
       'Glass and ceramic products': ['glass', 'glas', 'ceramic', 'keramik', 'schauglas', 'sichtglas', 'glasprodukt', 'glaswaren'],
       'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium'],
@@ -600,7 +619,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       'Industrial supplies': ['industrial', 'industrie', 'supplies', 'zubehör', 'industrial supplies'],
       'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge'],
       'Process technology': ['process', 'prozess'],
-      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering'],
+      'Mechanical engineering, plant construction and apparatus construction': ['mechanical engineering', 'maschinenbau', 'plant engineering', 'anlagenbau'],
       'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications'],
       'Wood and wood products': ['wood', 'holz', 'timber'],
       'Plastics and plastic products': ['plastic', 'kunststoff', 'polymer'],
@@ -608,47 +627,63 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       'Food technology': ['food', 'lebensmittel', 'beverage', 'getränke'],
       'Packaging machinery': ['packaging', 'verpackung'],
       'Cleaning supplies': ['cleaning', 'reinigung'],
-      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung']
+      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung'],
+      'Training and education': ['training', 'education', 'schulung', 'ausbildung', 'weiterbildung', 'academy', 'school', 'college', 'university']
     };
     
+    // If it's an educational institution, ONLY match Training and education
+    if (isEducation) {
+      console.log('🎓 Detected educational institution - limiting to Training and education only');
+      if (icpIndustries.includes('Training and education')) {
+        matchedIndustries.push('Training and education');
+      }
+    } else {
+      // Normal matching for non-educational companies
+    
     const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
-    
-    for (const ind of priorityIndustries) {
-      if (matchedIndustries.length >= 5) break;
-      if (!icpIndustries.includes(ind)) continue;
+      // Normal matching for non-educational companies
       
-      if (industryKeywordMap[ind]) {
-        for (const keyword of industryKeywordMap[ind]) {
-          if (searchText.includes(keyword)) {
-            matchedIndustries.push(ind);
-            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
-            break;
+      // First try exact/keyword matching with priority order
+      // PRIORITY: Glass should be checked first
+      const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
+      
+      for (const ind of priorityIndustries) {
+        if (matchedIndustries.length >= 5) break;
+        if (!icpIndustries.includes(ind)) continue;
+        
+        if (industryKeywordMap[ind]) {
+          for (const keyword of industryKeywordMap[ind]) {
+            if (searchText.includes(keyword)) {
+              matchedIndustries.push(ind);
+              console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+              break;
+            }
           }
         }
       }
-    }
-    
-    for (const ind of icpIndustries) {
-      if (matchedIndustries.length >= 5) break;
-      if (matchedIndustries.includes(ind)) continue;
       
-      const indLower = ind.toLowerCase();
-      
-      if (industryKeywordMap[ind]) {
-        for (const keyword of industryKeywordMap[ind]) {
-          if (searchText.includes(keyword)) {
+      for (const ind of icpIndustries) {
+        if (matchedIndustries.length >= 5) break;
+        if (matchedIndustries.includes(ind)) continue;
+        
+        const indLower = ind.toLowerCase();
+        
+        if (industryKeywordMap[ind]) {
+          for (const keyword of industryKeywordMap[ind]) {
+            if (searchText.includes(keyword)) {
+              matchedIndustries.push(ind);
+              console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+              break;
+            }
+          }
+        } else {
+          const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
+          if (searchText.includes(indLower) || searchText.includes(mainWords)) {
             matchedIndustries.push(ind);
-            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
-            break;
           }
         }
-      } else {
-        const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
-        if (searchText.includes(indLower) || searchText.includes(mainWords)) {
-          matchedIndustries.push(ind);
-        }
       }
-    }
+    } // Close the else block for non-education companies
     
     const finalIndustry = matchedIndustries.length > 0 
       ? matchedIndustries.join('; ')
