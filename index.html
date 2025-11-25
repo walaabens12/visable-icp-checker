@@ -57,17 +57,6 @@ function ICPChecker() {
   const [employeePage, setEmployeePage] = useState(1);
   const [hasMoreEmployees, setHasMoreEmployees] = useState(false);
   
-  // Semantic search states
-  const [searchMode, setSearchMode] = useState('domain'); // 'domain' or 'semantic'
-  const [semanticQuery, setSemanticQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [selectedCountries, setSelectedCountries] = useState(['DE', 'AT', 'CH']); // Default: all DACH
-  const [selectedSizes, setSelectedSizes] = useState([
-    'FiveToNine', 'TenToNineteen', 'TwentyToFortyNine',
-    'FiftyToNinetyNine', 'OneHundredToOneNinetyNine', 'TwoHundredToFourNinetyNine'
-  ]); // Default: all ICP sizes
-  
   // Ref for auto-scrolling
   const employeesRef = React.useRef(null);
 
@@ -397,29 +386,17 @@ YOUR TASK: Classify this company according to these ICP criteria:
 1. INDUSTRY - Match to industries from this list (can be MULTIPLE, but LIMIT TO 5 MAX):
 ${icpIndustries.map((ind, idx) => `${idx + 1}. ${ind}`).join('\n')}
 
-IMPORTANT MATCHING RULES:
-- **PRIMARY SOURCE**: Company Description and Keywords fields - these are most reliable
-- **SECONDARY SOURCE**: Industry field and Categories (if provided)
-- Match based on the CORE BUSINESS ACTIVITY described, not tangential mentions
-- "Engineering programs" ≠ "Mechanical engineering" (education vs manufacturing)
-- "Nursing training" ≠ "Medical equipment" (education vs products)
-- Focus on WHAT THEY DO, not what they teach/serve
-- Only list multiple industries if the company genuinely operates in multiple sectors
-- If primarily one sector, list ONLY that one
-
-EXAMPLES:
-- "Educational institution offering engineering programs" → ONLY "Training and education" (NOT Mechanical engineering)
-- "Manufacturer of metal products, also offers training" → "Metal and metal products; Training and education"
-- "Nursing school" → ONLY "Training and education" (NOT healthcare products)
-- "Food manufacturer that runs culinary academy" → "Food technology; Training and education"
-
-Pay special attention to German terms:
+IMPORTANT: 
+- Search ALL fields: Industry, Description, Categories, AND Keywords
+- List up to 5 industries if multiple truly apply (semicolon-separated)
+- If no good match exists, use format: "Other: [original industry name]"
+- Only list multiple if genuinely applicable (not just loosely related)
+- Pay special attention to German terms:
   * "Glas" / "Schauglas" / "Sichtglas" = Glass and ceramic products
   * "Armaturen" = Valve technology or fittings
   * "Behälter" = Containers
   * "Anlagen" = Plant construction
   * "Maschinen" = Machinery
-  * "Ausbildung" / "Schulung" = Training and education
 
 2. SUPPLIER TYPE - Choose ALL that truly apply (semicolon-separated if multiple):
 - Manufacturer (produces/manufactures products)
@@ -468,26 +445,12 @@ No estimation needed.
 - European (multiple European countries)
 - International (global/worldwide operations)
 
-⚠️ IMPORTANT: Be CONSERVATIVE - bias toward larger areas. Only mark as "Regional" if there are EXPLICIT indicators like:
-- "local", "city", "canton", "regional", "municipal"
-- Company serves only one city or small geographic area
-- Description mentions specific local area only
-
-DEFAULT to "National" for DACH companies unless clear evidence of broader (European/International) or narrower (Regional) scope.
-
-5. ICP MATCH CRITERIA (ALL must pass - ANY failure = NOT ICP):
+5. ICP MATCH CRITERIA (ALL must pass):
 ✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
 ✓ Industry: MUST match at least one from the list above (not "Other:")
-✓ Distribution: MUST be International, European, or National (NOT Regional - Regional = FAIL)
-✓ Supplier Type: CANNOT be "Service Provider" ONLY - must include Manufacturer, Distributor, Wholesaler, or Customer Specific Manufacturing
-
-CRITICAL BLOCKERS (automatic ICP = false):
-- Regional distribution → NOT ICP
-- Service Provider only (without any manufacturing/distribution) → NOT ICP
-- Employee size 1-4 or 500+ → NOT ICP
-- Country outside DACH → NOT ICP
-- Industry "Other:" → NOT ICP
+✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
+✓ Supplier Type: All types accepted
 
 RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 {
@@ -500,9 +463,52 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 }`;
 
     try {
-      // Skip OpenAI API (key invalid) - use fallback classification directly
-      console.warn('⚠️ Skipping GPT-4, using fallback classification');
-      return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
+      if (!OPENAI_API_KEY || OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE') {
+        console.warn('⚠️ OpenAI API key not set, using fallback classification');
+        return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
+      }
+
+      console.log('🤖 Calling GPT-4 for intelligent classification...');
+      
+      const gptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert B2B industry classifier. Respond ONLY with valid JSON, no markdown formatting, no backticks, no extra text. When employee data is missing, you MUST estimate based on available context and provide only the range (not exact numbers).'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.2,
+          max_tokens: 500
+        })
+      });
+
+      if (gptResponse.ok) {
+        const gptData = await gptResponse.json();
+        let responseText = gptData.choices[0].message.content.trim();
+        
+        responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        
+        console.log('✅ GPT-4 Response:', responseText);
+        
+        const classification = JSON.parse(responseText);
+        classification.domain_found = true;
+        return classification;
+      } else {
+        const errorText = await gptResponse.text();
+        console.error('❌ GPT-4 API failed:', gptResponse.status, errorText);
+        throw new Error(`GPT-4 API failed: ${gptResponse.status}`);
+      }
     } catch (err) {
       console.error('❌ GPT-4 classification error:', err);
       console.warn('⚠️ Falling back to simple classification');
@@ -570,13 +576,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     console.log('🔍 Searching in text:', searchText.substring(0, 200));
     
-    // Check if this is primarily an educational/training institution
-    const isEducation = descLower.includes('education') || descLower.includes('training') || 
-                        descLower.includes('school') || descLower.includes('college') ||
-                        descLower.includes('academy') || descLower.includes('university') ||
-                        descLower.includes('ausbildung') || descLower.includes('schulung') ||
-                        descLower.includes('weiterbildung') || descLower.includes('bildung');
-    
     const industryKeywordMap = {
       'Glass and ceramic products': ['glass', 'glas', 'ceramic', 'keramik', 'schauglas', 'sichtglas', 'glasprodukt', 'glaswaren'],
       'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium'],
@@ -587,7 +586,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       'Industrial supplies': ['industrial', 'industrie', 'supplies', 'zubehör', 'industrial supplies'],
       'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge'],
       'Process technology': ['process', 'prozess'],
-      'Mechanical engineering, plant construction and apparatus construction': ['mechanical engineering', 'maschinenbau', 'plant engineering', 'anlagenbau'],
+      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering'],
       'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications'],
       'Wood and wood products': ['wood', 'holz', 'timber'],
       'Plastics and plastic products': ['plastic', 'kunststoff', 'polymer'],
@@ -595,58 +594,47 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       'Food technology': ['food', 'lebensmittel', 'beverage', 'getränke'],
       'Packaging machinery': ['packaging', 'verpackung'],
       'Cleaning supplies': ['cleaning', 'reinigung'],
-      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung'],
-      'Training and education': ['training', 'education', 'schulung', 'ausbildung', 'weiterbildung', 'academy', 'school', 'college', 'university']
+      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung']
     };
     
-    // If it's an educational institution, ONLY match Training and education
-    if (isEducation) {
-      console.log('🎓 Detected educational institution - limiting to Training and education only');
-      if (icpIndustries.includes('Training and education')) {
-        matchedIndustries.push('Training and education');
-      }
-    } else {
-      // Normal matching for non-educational companies
-      // PRIORITY: Glass should be checked first
-      const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
+    const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
+    
+    for (const ind of priorityIndustries) {
+      if (matchedIndustries.length >= 5) break;
+      if (!icpIndustries.includes(ind)) continue;
       
-      for (const ind of priorityIndustries) {
-        if (matchedIndustries.length >= 5) break;
-        if (!icpIndustries.includes(ind)) continue;
-        
-        if (industryKeywordMap[ind]) {
-          for (const keyword of industryKeywordMap[ind]) {
-            if (searchText.includes(keyword)) {
-              matchedIndustries.push(ind);
-              console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
-              break;
-            }
-          }
-        }
-      }
-      
-      for (const ind of icpIndustries) {
-        if (matchedIndustries.length >= 5) break;
-        if (matchedIndustries.includes(ind)) continue;
-        
-        const indLower = ind.toLowerCase();
-        
-        if (industryKeywordMap[ind]) {
-          for (const keyword of industryKeywordMap[ind]) {
-            if (searchText.includes(keyword)) {
-              matchedIndustries.push(ind);
-              console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
-              break;
-            }
-          }
-        } else {
-          const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
-          if (searchText.includes(indLower) || searchText.includes(mainWords)) {
+      if (industryKeywordMap[ind]) {
+        for (const keyword of industryKeywordMap[ind]) {
+          if (searchText.includes(keyword)) {
             matchedIndustries.push(ind);
+            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+            break;
           }
         }
       }
-    } // Close the else block for non-education companies
+    }
+    
+    for (const ind of icpIndustries) {
+      if (matchedIndustries.length >= 5) break;
+      if (matchedIndustries.includes(ind)) continue;
+      
+      const indLower = ind.toLowerCase();
+      
+      if (industryKeywordMap[ind]) {
+        for (const keyword of industryKeywordMap[ind]) {
+          if (searchText.includes(keyword)) {
+            matchedIndustries.push(ind);
+            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+            break;
+          }
+        }
+      } else {
+        const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
+        if (searchText.includes(indLower) || searchText.includes(mainWords)) {
+          matchedIndustries.push(ind);
+        }
+      }
+    }
     
     const finalIndustry = matchedIndustries.length > 0 
       ? matchedIndustries.join('; ')
@@ -672,27 +660,15 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     const finalSupplierType = supplierTypes.join('; ');
 
-    let distArea = 'National'; // Changed default from 'Regional' to 'National'
+    let distArea = 'Regional';
     
-    // Be VERY conservative - only mark as Regional if explicitly local/city-level
-    if (descLower.includes('local') || descLower.includes('city') || 
-        descLower.includes('regional') || descLower.includes('canton') ||
-        (descLower.includes('area') && !descLower.includes('international') && !descLower.includes('europe'))) {
-      distArea = 'Regional';
-    } else if (descLower.includes('global') || descLower.includes('worldwide') || 
-               descLower.includes('international') || employeeCount > 100) {
+    if (descLower.includes('global') || descLower.includes('worldwide')) {
       distArea = 'International';
-    } else if (descLower.includes('europe') || descLower.includes('european') || 
-               descLower.includes('eu ') || employeeCount > 50) {
+    } else if (descLower.includes('europe') || descLower.includes('european')) {
       distArea = 'European';
-    } else if (descLower.includes('national') || descLower.includes('country') || 
-               descLower.includes('nationwide') || descLower.includes('switzerland') || 
-               descLower.includes('germany') || descLower.includes('austria') ||
-               descLower.includes('schweiz') || descLower.includes('deutschland') || 
-               descLower.includes('österreich')) {
+    } else if (descLower.includes('national') || employeeCount > 100) {
       distArea = 'National';
     }
-    // Default stays 'National' if no clear indicators
 
     const reasons = [];
     let isICP = true;
@@ -728,22 +704,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       reasons.push(`✓ Industry match`);
     }
     
-    // Check distribution area - Regional is NOT ICP
-    if (distArea === 'Regional') {
-      isICP = false;
-      reasons.push(`✗ Regional distribution only`);
-    } else {
-      reasons.push(`✓ Distribution: ${distArea}`);
-    }
-    
-    // Check supplier type - Service Provider ONLY is NOT ICP
-    if (finalSupplierType === 'Service Provider') {
-      isICP = false;
-      reasons.push(`✗ Service Provider only (no manufacturing/distribution)`);
-    } else {
-      reasons.push(`✓ Supplier type acceptable`);
-    }
-    
     return {
       industry: finalIndustry,
       supplier_type: finalSupplierType,
@@ -755,96 +715,34 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     };
   };
 
-  const handleSemanticSearch = async () => {
-    if (!semanticQuery.trim()) return;
-    
-    setIsSearching(true);
-    setError('');
-    setSearchResults([]);
-    setCompanyData(null);
-    
-    try {
-      console.log('🔍 Semantic search:', semanticQuery);
-      console.log('📍 Countries:', selectedCountries);
-      console.log('👥 Sizes:', selectedSizes);
-      
-      const response = await fetch('https://api.companyenrich.com/companies/search', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${COMPANYENRICH_API_KEY}`,
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: JSON.stringify({
-          page: 1,
-          pageSize: 20,
-          semanticQuery: semanticQuery,
-          semanticWeight: 0.7,
-          countries: selectedCountries.length > 0 ? selectedCountries : undefined,
-          employees: selectedSizes.length > 0 ? selectedSizes : undefined
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('✅ Search results:', data);
-        
-        if (data.items && data.items.length > 0) {
-          setSearchResults(data.items);
-        } else {
-          setError('No companies found matching your search criteria.');
-        }
-      } else {
-        const errorText = await response.text();
-        console.error('❌ Search failed:', response.status, errorText);
-        setError(`Search failed: ${response.status}`);
-      }
-    } catch (err) {
-      console.error('❌ Search error:', err);
-      setError(`Search error: ${err.message}`);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-  
-  const selectCompanyFromSearch = async (company) => {
-    console.log('📌 Selected company:', company);
-    setSearchResults([]);
-    setSemanticQuery('');
-    
-    // Enrich the selected company
-    if (company.domain) {
-      setDomain(company.domain);
-      setSearchMode('domain');
-      // Trigger the normal enrichment flow
-      await enrichCompany(company.domain);
-    }
-  };
-  
-  const enrichCompany = async (targetDomain) => {
-    const cleanedDomain = cleanDomain(targetDomain);
+  const handleSearch = async () => {
+    if (!domain.trim()) return;
     
     setIsLoading(true);
     setError('');
-    setProgress('Enriching company...');
-    setApiErrors([]);
     setCompanyData(null);
+    setApiErrors([]);
+    setProgress('Starting enrichment...');
     setEmployees([]);
     setSelectedEmployees([]);
     setRevealedContacts([]);
-    
+    setEmployeePage(1);
+
     try {
+      const cleanedDomain = cleanDomain(domain);
+      console.log('🔍 Searching for:', cleanedDomain);
+
       let ceData = null;
       let wizaData = null;
       const errors = [];
 
       setProgress('Calling CompanyEnrich API...');
       try {
-        const ceResponse = await fetch(`https://api.companyenrich.com/companies/${cleanedDomain}`, {
+        const ceResponse = await fetch(`https://api.companyenrich.com/companies/enrich?domain=${cleanedDomain}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${COMPANYENRICH_API_KEY}`,
-            'accept': 'application/json'
+            'Accept': 'application/json'
           }
         });
 
@@ -889,58 +787,88 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         errors.push(`Wiza: ${err.message}`);
       }
 
-      if (!ceData && !wizaData) {
-        setError('Could not fetch data from any API');
-        setApiErrors(errors);
-        return;
-      }
+      setApiErrors(errors);
 
-      setProgress('Classifying company...');
-      const classification = await classifyWithGPT4(ceData, wizaData);
+      // Continue even if both APIs fail
+      setProgress('Analyzing with AI...');
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      const result = {
-        domain: cleanedDomain,
-        ce_name: ceData?.name,
-        ce_industry: ceData?.industry,
-        ce_description: ceData?.description,
-        ce_categories: ceData?.categories,
-        ce_keywords: ceData?.keywords,
-        ce_location_city: ceData?.location?.city?.name,
-        ce_location_state: ceData?.location?.state?.name,
-        ce_country_name: ceData?.location?.country?.name,
-        ce_employees: ceData?.employees,
-        ce_revenue: ceData?.revenue,
-        ce_founded_year: ceData?.founded_year,
-        wiza_company_name: wizaData?.data?.company_name,
-        wiza_company_industry: wizaData?.data?.company_industry,
-        wiza_company_description: wizaData?.data?.company_description,
-        wiza_company_country: wizaData?.data?.company_country,
-        wiza_company_employees: wizaData?.data?.company_size,
+      const classification = await classifyWithGPT4(ceData, wizaData);
+
+      // Skip e-commerce detection
+      // setProgress('Checking for e-commerce...');
+      // const websiteToCheck = ceData?.website || `https://${cleanedDomain}`;
+      // const ecommerceInfo = await detectEcommerce(websiteToCheck);
+      // console.log('🛒 E-commerce detection result:', ecommerceInfo);
+
+      const combinedData = {
+        ce_name: ceData?.name || '',
+        ce_domain: ceData?.domain || cleanedDomain,
+        ce_website: ceData?.website || `https://${cleanedDomain}`,
+        ce_industry: ceData?.industry || '',
+        ce_description: ceData?.description || '',
+        ce_founded_year: ceData?.founded_year || '',
+        ce_employees: ceData?.employees || '',
+        ce_industries: (ceData?.industries || []).join('; '),
+        ce_keywords: (ceData?.keywords || []).join('; '),
+        ce_technologies: (ceData?.technologies || []).join('; '),
+        ce_address: ceData?.location?.address || '',
+        ce_postal_code: ceData?.location?.postal_code || '',
+        ce_phone: ceData?.location?.phone || '',
+        ce_city_name: ceData?.location?.city?.name || '',
+        ce_state_name: ceData?.location?.state?.name || '',
+        ce_country_name: ceData?.location?.country?.name || '',
+        ce_stock_symbol: ceData?.financial?.stock_symbol || '',
+        ce_stock_exchange: ceData?.financial?.stock_exchange || '',
+        ce_total_funding: ceData?.financial?.total_funding || '',
+        ce_funding_stage: ceData?.financial?.funding_stage || '',
+        ce_linkedin_url: ceData?.socials?.linkedin_url || '',
+        ce_twitter_url: ceData?.socials?.twitter_url || '',
+        ce_facebook_url: ceData?.socials?.facebook_url || '',
+        
+        wiza_company_name: wizaData?.data?.company_name || '',
+        wiza_company_industry: wizaData?.data?.company_industry || '',
+        wiza_company_description: wizaData?.data?.company_description || '',
+        wiza_company_size: wizaData?.data?.company_size || '',
+        wiza_company_size_range: wizaData?.data?.company_size_range || '',
+        wiza_company_revenue_range: wizaData?.data?.company_revenue_range || '',
+        wiza_company_type: wizaData?.data?.company_type || '',
+        wiza_company_founded: wizaData?.data?.company_founded || '',
+        wiza_company_location: wizaData?.data?.company_location || '',
+        wiza_company_country: wizaData?.data?.company_country || '',
+        wiza_company_region: wizaData?.data?.company_region || '',
+        wiza_company_funding: wizaData?.data?.company_funding || '',
+        wiza_company_linkedin: wizaData?.data?.company_linkedin || '',
+        
         final_industry: classification.industry,
         final_supplier_type: classification.supplier_type,
         final_distribution_area: classification.distribution_area,
         final_employees: classification.employees,
-        final_reason: classification.reason,
         icp_match: classification.icp_match,
-        domain_found: classification.domain_found
+        final_reason: classification.reason,
+        domain_found: classification.domain_found !== false,
+        
+        // ecommerce_detected: ecommerceInfo.hasEcommerce,
+        // ecommerce_platform: ecommerceInfo.platform,
+        // ecommerce_confidence: ecommerceInfo.confidence,
+        // ecommerce_indicators: ecommerceInfo.indicators,
+        
+        _api_sources: {
+          companyenrich: !!ceData,
+          wiza: !!wizaData
+        }
       };
 
-      setCompanyData(result);
-      setApiErrors(errors);
+      console.log('📊 Final combined data:', combinedData);
+      setCompanyData(combinedData);
       setProgress('');
-      
     } catch (err) {
-      console.error('❌ Enrichment error:', err);
-      setError(err.message);
+      console.error('💥 Fatal error:', err);
+      setError(`Fatal error: ${err.message}`);
     } finally {
       setIsLoading(false);
-      setProgress('');
     }
   };
-
-  const handleSearch = async () => {
-    if (!domain.trim()) return;
-    await enrichCompany(domain);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') handleSearch();
@@ -1249,12 +1177,6 @@ Reasoning: ${companyData.final_reason}
       return { color: '#ef4444', text: 'ICP Blocker: Service Provider Only', icon: 'x' };
     }
     
-    // Check if Regional distribution (hard blocker)
-    const distribution = companyData.final_distribution_area || '';
-    if (distribution === 'Regional') {
-      return { color: '#ef4444', text: 'ICP Blocker: Regional Distribution Only', icon: 'x' };
-    }
-    
     // Soft blocker (ORANGE) - Industry is the only issue
     if (industry.startsWith('Other:')) {
       return { color: visableOrange, text: 'ICP Blocker: Industry Not in List', icon: 'alert' };
@@ -1296,43 +1218,6 @@ Reasoning: ${companyData.final_reason}
 
         {/* Search Box */}
         <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginBottom: '32px' }}>
-          
-          {/* Mode Toggle */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: '2px solid #e5e7eb', paddingBottom: '16px' }}>
-            <button
-              onClick={() => { setSearchMode('domain'); setSearchResults([]); setError(''); }}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: searchMode === 'domain' ? visableGreen : 'transparent',
-                color: searchMode === 'domain' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              🔍 Domain Search
-            </button>
-            <button
-              onClick={() => { setSearchMode('semantic'); setCompanyData(null); setError(''); }}
-              style={{
-                padding: '12px 24px',
-                backgroundColor: searchMode === 'semantic' ? visableGreen : 'transparent',
-                color: searchMode === 'semantic' ? 'white' : '#6b7280',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              🌍 Semantic Search
-            </button>
-          </div>
-
-          {/* Domain Search Mode */}
-          {searchMode === 'domain' && (
           <div style={{ marginBottom: '24px' }}>
             <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
               Company Domain
@@ -1392,144 +1277,9 @@ Reasoning: ${companyData.final_reason}
               </button>
             </div>
           </div>
-          )}
 
-          {/* Semantic Search Mode */}
-          {searchMode === 'semantic' && (
-            <div>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                Search Query
-              </label>
-              <div style={{ marginBottom: '16px' }}>
-                <input
-                  type="text"
-                  value={semanticQuery}
-                  onChange={(e) => setSemanticQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSemanticSearch()}
-                  placeholder="e.g., metal manufacturers in Germany with 50-200 employees"
-                  disabled={isSearching}
-                  style={{
-                    width: '100%',
-                    padding: '16px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    outline: 'none',
-                    fontSize: '16px',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = visableGreen}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                />
-              </div>
-
-              {/* Filters */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                
-                {/* Country Filter */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                    Countries
-                  </label>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {[
-                      { code: 'DE', name: '🇩🇪 Germany' },
-                      { code: 'AT', name: '🇦🇹 Austria' },
-                      { code: 'CH', name: '🇨🇭 Switzerland' }
-                    ].map(country => (
-                      <button
-                        key={country.code}
-                        onClick={() => {
-                          setSelectedCountries(prev =>
-                            prev.includes(country.code)
-                              ? prev.filter(c => c !== country.code)
-                              : [...prev, country.code]
-                          );
-                        }}
-                        style={{
-                          padding: '8px 16px',
-                          backgroundColor: selectedCountries.includes(country.code) ? visableGreen : '#f3f4f6',
-                          color: selectedCountries.includes(country.code) ? 'white' : '#374151',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {country.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Size Filter */}
-                <div>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                    Company Size
-                  </label>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {[
-                      { value: 'FiveToNine', label: '5-9' },
-                      { value: 'TenToNineteen', label: '10-19' },
-                      { value: 'TwentyToFortyNine', label: '20-49' },
-                      { value: 'FiftyToNinetyNine', label: '50-99' },
-                      { value: 'OneHundredToOneNinetyNine', label: '100-199' },
-                      { value: 'TwoHundredToFourNinetyNine', label: '200-499' }
-                    ].map(size => (
-                      <button
-                        key={size.value}
-                        onClick={() => {
-                          setSelectedSizes(prev =>
-                            prev.includes(size.value)
-                              ? prev.filter(s => s !== size.value)
-                              : [...prev, size.value]
-                          );
-                        }}
-                        style={{
-                          padding: '8px 16px',
-                          backgroundColor: selectedSizes.includes(size.value) ? visableGreen : '#f3f4f6',
-                          color: selectedSizes.includes(size.value) ? 'white' : '#374151',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {size.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Search Button */}
-              <button
-                onClick={handleSemanticSearch}
-                disabled={!semanticQuery.trim() || isSearching}
-                style={{
-                  width: '100%',
-                  padding: '16px',
-                  backgroundColor: (semanticQuery.trim() && !isSearching) ? visableGreen : '#d1d5db',
-                  color: 'white',
-                  borderRadius: '12px',
-                  fontWeight: '600',
-                  border: 'none',
-                  cursor: (semanticQuery.trim() && !isSearching) ? 'pointer' : 'not-allowed',
-                  fontSize: '16px',
-                  transition: 'background-color 0.2s'
-                }}
-              >
-                {isSearching ? 'Searching...' : '🔍 Search Companies'}
-              </button>
-            </div>
-          )}
-
-          {/* Error Display */}
           {error && (
             <div style={{
-              marginTop: '16px',
               padding: '16px',
               backgroundColor: '#fef2f2',
               border: '1px solid #fecaca',
@@ -1592,60 +1342,6 @@ Reasoning: ${companyData.final_reason}
                 {progress}
               </div>
             )}
-          </div>
-        )}
-
-        {/* Search Results Table */}
-        {searchResults.length > 0 && searchMode === 'semantic' && (
-          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginBottom: '32px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#111827', marginBottom: '20px' }}>
-              Found {searchResults.length} companies
-            </h2>
-            
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Company</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Domain</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Industry</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Country</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Employees</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {searchResults.map((company, idx) => (
-                    <tr 
-                      key={idx}
-                      onClick={() => selectCompanyFromSearch(company)}
-                      style={{ 
-                        borderBottom: '1px solid #f3f4f6',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                    >
-                      <td style={{ padding: '16px', fontSize: '14px', color: '#111827', fontWeight: '500' }}>
-                        {company.name || 'Unknown'}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
-                        {company.domain || '-'}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
-                        {company.industry || '-'}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
-                        {company.location?.country?.name || '-'}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
-                        {company.employees || '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
         )}
 
@@ -2293,8 +1989,9 @@ Reasoning: ${companyData.final_reason}
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(ICPChecker));
-</script>
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(ICPChecker));
+  </script>
 </body>
 </html>
