@@ -496,11 +496,10 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 
       console.log('🤖 Calling GPT-4 for intelligent classification...');
       
-      const gptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      const gptResponse = await fetch('https://wiza-proxy.onrender.com/api/openai/classify', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           model: 'gpt-4',
