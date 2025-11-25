@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visable ICP Checker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <script type="text/babel">
+const { useState } = React;
+
+// Lucide Icons (using the global lucide object)
+const Search = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "11", cy: "11", r: "8" }), React.createElement('path', { d: "m21 21-4.3-4.3" }));
+const Users = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" }), React.createElement('circle', { cx: "9", cy: "7", r: "4" }), React.createElement('path', { d: "M22 21v-2a4 4 0 0 0-3-3.87" }), React.createElement('path', { d: "M16 3.13a4 4 0 0 1 0 7.75" }));
+const DollarSign = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "12", x2: "12", y1: "2", y2: "22" }), React.createElement('path', { d: "M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }));
+const MapPin = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" }), React.createElement('circle', { cx: "12", cy: "10", r: "3" }));
+const CheckCircle = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M22 11.08V12a10 10 0 1 1-5.93-9.14" }), React.createElement('polyline', { points: "22 4 12 14.01 9 11.01" }));
+const XCircle = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('path', { d: "m15 9-6 6" }), React.createElement('path', { d: "m9 9 6 6" }));
+const Loader = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "12", x2: "12", y1: "2", y2: "6" }), React.createElement('line', { x1: "12", x2: "12", y1: "18", y2: "22" }), React.createElement('line', { x1: "4.93", x2: "7.76", y1: "4.93", y2: "7.76" }), React.createElement('line', { x1: "16.24", x2: "19.07", y1: "16.24", y2: "19.07" }), React.createElement('line', { x1: "2", x2: "6", y1: "12", y2: "12" }), React.createElement('line', { x1: "18", x2: "22", y1: "12", y2: "12" }), React.createElement('line', { x1: "4.93", x2: "7.76", y1: "19.07", y2: "16.24" }), React.createElement('line', { x1: "16.24", x2: "19.07", y1: "7.76", y2: "4.93" }));
+const ExternalLink = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" }), React.createElement('polyline', { points: "15 3 21 3 21 9" }), React.createElement('line', { x1: "10", x2: "21", y1: "14", y2: "3" }));
+const Linkedin = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" }), React.createElement('rect', { width: "4", height: "12", x: "2", y: "9" }), React.createElement('circle', { cx: "4", cy: "4", r: "2" }));
+const Twitter = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" }));
+const Facebook = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" }));
+const Calendar = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('rect', { width: "18", height: "18", x: "3", y: "4", rx: "2", ry: "2" }), React.createElement('line', { x1: "16", x2: "16", y1: "2", y2: "6" }), React.createElement('line', { x1: "8", x2: "8", y1: "2", y2: "6" }), React.createElement('line', { x1: "3", x2: "21", y1: "10", y2: "10" }));
+const Target = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('circle', { cx: "12", cy: "12", r: "6" }), React.createElement('circle', { cx: "12", cy: "12", r: "2" }));
+const Award = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "8", r: "6" }), React.createElement('path', { d: "M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" }));
+const Zap = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('polygon', { points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2" }));
+const AlertCircle = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('line', { x1: "12", x2: "12", y1: "8", y2: "12" }), React.createElement('line', { x1: "12", x2: "12.01", y1: "16", y2: "16" }));
+const Globe = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('line', { x1: "2", x2: "22", y1: "12", y2: "12" }), React.createElement('path', { d: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" }));
+
+function ICPChecker() {
+  const [domain, setDomain] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [companyData, setCompanyData] = useState(null);
+  const [error, setError] = useState('');
+  const [progress, setProgress] = useState('');
+  const [apiErrors, setApiErrors] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [isLoadingEmployees, setIsLoadingEmployees] = useState(false);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [revealedContacts, setRevealedContacts] = useState([]);
+  const [employeePage, setEmployeePage] = useState(1);
+  const [hasMoreEmployees, setHasMoreEmployees] = useState(false);
+  
+  // Ref for auto-scrolling
+  const employeesRef = React.useRef(null);
+
+  const visableGreen = '#84BD00';
+  const visableNavy = '#002B49';
+  const visableOrange = '#FF6B35';
+  const visableGray = '#9CA3AF';
+
+  // API KEYS
+  const OPENAI_API_KEY = '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';
+  const WIZA_API_KEY = '9b1a3dc7adf103da93e7abe5f39e588d54eafdddfaeb9ab540726d3f5f590a3d';
+  const COMPANYENRICH_API_KEY = 'G4CG7Y9JVz4eX0nEykxikx';
+
+  const cleanDomain = (url) => {
+    try {
+      let cleaned = url.toLowerCase().trim();
+      cleaned = cleaned.replace('http://', '').replace('https://', '').replace('www.', '');
+      cleaned = cleaned.split('/')[0].split('?')[0].split(':')[0];
+      return cleaned;
+    } catch {
+      return url;
+    }
+  };
+
+  const detectEcommerce = async (websiteUrl) => {
+    if (!websiteUrl) {
+      return {
+        hasEcommerce: false,
+        platform: 'Unknown',
+        confidence: 'low'
+      };
+    }
+
+    try {
+      console.log('🛒 Detecting e-commerce for:', websiteUrl);
+      
+      const response = await fetch(websiteUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!response.ok) {
+        console.warn('⚠️ Could not fetch website for e-commerce detection');
+        return {
+          hasEcommerce: false,
+          platform: 'Unknown',
+          confidence: 'low',
+          error: 'Could not fetch website'
+        };
+      }
+
+      const html = await response.text();
+      const htmlLower = html.toLowerCase();
+
+      const platforms = {
+        'Shopify': [
+          'cdn.shopify.com',
+          'shopify-analytics',
+          'shopify.theme',
+          'shopifycdn.com',
+          'shopify-payment-button'
+        ],
+        'WooCommerce': [
+          'woocommerce',
+          'wc-ajax',
+          'wp-content/plugins/woocommerce',
+          'class="woocommerce"'
+        ],
+        'Magento': [
+          'mage/cookies',
+          'magento',
+          'mage-',
+          'varien/js',
+          'skin/frontend'
+        ],
+        'BigCommerce': [
+          'bigcommerce',
+          'cdn.bcapp',
+          'bigcommerce-cdn'
+        ],
+        'Wix': [
+          'wix.com',
+          'wixstatic.com',
+          'wix-code',
+          'parastorage.com'
+        ],
+        'Squarespace': [
+          'squarespace.com',
+          'squarespace-cdn',
+          'sqsp.com'
+        ],
+        'PrestaShop': [
+          'prestashop',
+          'ps_version',
+          'prestablog'
+        ],
+        'OpenCart': [
+          'catalog/view/theme',
+          'route=product/product',
+          'opencart'
+        ],
+        'Salesforce Commerce Cloud': [
+          'demandware',
+          'salesforce.com/commerce'
+        ],
+        'SAP Commerce': [
+          'hybris',
+          '_csrf',
+          'sap-commerce'
+        ],
+        'Custom/Unknown': []
+      };
+
+      let detectedPlatform = 'None';
+      let confidence = 'low';
+
+      for (const [platform, patterns] of Object.entries(platforms)) {
+        if (platform === 'Custom/Unknown') continue;
+        
+        let matchCount = 0;
+        for (const pattern of patterns) {
+          if (htmlLower.includes(pattern.toLowerCase())) {
+            matchCount++;
+          }
+        }
+
+        if (matchCount > 0) {
+          detectedPlatform = platform;
+          confidence = matchCount >= 2 ? 'high' : 'medium';
+          console.log(`✅ E-commerce detected: ${platform} (${matchCount} matches)`);
+          break;
+        }
+      }
+
+      const ecommerceIndicators = [
+        'add to cart',
+        'shopping cart',
+        'checkout',
+        'product-',
+        'buy now',
+        'add-to-cart',
+        'shopping-bag',
+        'cart-icon',
+        'e-commerce',
+        'ecommerce',
+        'online shop',
+        'webshop'
+      ];
+
+      let ecommerceSignals = 0;
+      for (const indicator of ecommerceIndicators) {
+        if (htmlLower.includes(indicator)) {
+          ecommerceSignals++;
+        }
+      }
+
+      const hasEcommerce = detectedPlatform !== 'None' || ecommerceSignals >= 3;
+
+      if (hasEcommerce && detectedPlatform === 'None') {
+        detectedPlatform = 'Custom/Unknown';
+        confidence = 'medium';
+      }
+
+      return {
+        hasEcommerce,
+        platform: detectedPlatform,
+        confidence,
+        indicators: ecommerceSignals
+      };
+
+    } catch (err) {
+      console.error('❌ E-commerce detection error:', err);
+      return {
+        hasEcommerce: false,
+        platform: 'Unknown',
+        confidence: 'low',
+        error: err.message
+      };
+    }
+  };
+
+  const classifyWithGPT4 = async (ceData, wizaData) => {
+    const hasData = ceData || wizaData;
+    
+    if (!hasData) {
+      return {
+        industry: 'Unknown',
+        supplier_type: 'Unknown',
+        distribution_area: 'Unknown',
+        employees: 'Unknown',
+        icp_match: false,
+        reason: 'No data available from APIs',
+        domain_found: false
+      };
+    }
+
+    const wizaEmployees = wizaData?.data?.company_size;
+    const wizaRange = wizaData?.data?.company_size_range;
+    const ceEmployees = ceData?.employees;
+    
+    let employeeCount = 0;
+    let hasEmployeeData = false;
+    
+    if (ceEmployees && !isNaN(parseInt(ceEmployees)) && parseInt(ceEmployees) > 1) {
+      employeeCount = parseInt(ceEmployees);
+      hasEmployeeData = true;
+      console.log('✅ Using CompanyEnrich employee count:', employeeCount);
+    } 
+    else if (wizaEmployees && !isNaN(parseInt(wizaEmployees)) && parseInt(wizaEmployees) > 1) {
+      employeeCount = parseInt(wizaEmployees);
+      hasEmployeeData = true;
+      console.log('✅ Using Wiza employee count:', employeeCount);
+    }
+    else if (wizaEmployees && parseInt(wizaEmployees) === 1) {
+      console.log('⚠️ Wiza reports 1 employee (likely unreliable), will use GPT-4 estimation');
+      hasEmployeeData = false;
+    }
+    else {
+      console.log('⚠️ No reliable employee data found, will use GPT-4 estimation');
+    }
+    
+    let sizeCategory = 'Unknown';
+    if (employeeCount >= 1 && employeeCount <= 4) sizeCategory = '1-4';
+    else if (employeeCount >= 5 && employeeCount <= 9) sizeCategory = '5-9';
+    else if (employeeCount >= 10 && employeeCount <= 19) sizeCategory = '10-19';
+    else if (employeeCount >= 20 && employeeCount <= 49) sizeCategory = '20-49';
+    else if (employeeCount >= 50 && employeeCount <= 99) sizeCategory = '50-99';
+    else if (employeeCount >= 100 && employeeCount <= 199) sizeCategory = '100-199';
+    else if (employeeCount >= 200 && employeeCount <= 499) sizeCategory = '200-499';
+    else if (employeeCount >= 500) sizeCategory = '500+';
+    else if (wizaRange) sizeCategory = wizaRange;
+    
+    const industry = ceData?.industry || wizaData?.data?.company_industry || '';
+    const description = (ceData?.description || wizaData?.data?.company_description || '');
+    const country = (ceData?.location?.country?.name || wizaData?.data?.company_country || '');
+    const categories = (ceData?.categories || []).join('; ');
+    const keywords = (ceData?.keywords || []).join('; ');
+    const revenue = wizaData?.data?.company_revenue_range || ceData?.financial?.total_funding || '';
+    
+    // EXACT 67 ICP Industries from Visable - DO NOT MODIFY
+    const icpIndustries = [
+      'Surface treatment machinery',
+      'Sealing technology',
+      'Installation',
+      'Machine parts',
+      'Wood and wood products',
+      'Electrical services',
+      'Vehicles',
+      'Casting and injection molding machinery',
+      'Construction machinery and equipment',
+      'Metal and metal products',
+      'Valve technology',
+      'Pipe and hose technology',
+      'Filter and sieve technology',
+      'Cable technology',
+      'Cleaning supplies',
+      'Packaging machinery',
+      'Heat treatment',
+      'Fluid technology',
+      'Electrical engineering',
+      'Industrial supplies',
+      'Control technology',
+      'Surface treatment',
+      'Measuring and testing technology',
+      'Catering technology and kitchen equipment',
+      'Home textiles',
+      'Tools and production supplies',
+      'Fastening technology, joining technology and fittings',
+      'Machining and forming',
+      'Sports',
+      'Environmental technology',
+      'Traffic engineering',
+      'Cleaning equipment and machinery',
+      'Food technology',
+      'Repair, maintenance and modernization',
+      'Plastics and plastic products',
+      'Robotics, process and automation technology',
+      'Conveyor technology',
+      'Building materials and supplies',
+      'Casting, injection molding and additive manufacturing',
+      'Drive technology',
+      'Leather, textile fibers, yarns and fabrics',
+      'Raw materials and chemistry',
+      'Pump technology',
+      'Mechanical engineering, plant construction and apparatus construction',
+      'Joining and bonding',
+      'Containers, logistics and storage supplies',
+      'Packaging material',
+      'Soldering, welding and bonding technology',
+      'Process technology',
+      'Office supplies',
+      'Refrigeration, air conditioning, ventilation and heating technology',
+      'Packaging services',
+      'Accumulator and battery technology',
+      'Glass and ceramic products',
+      'Marking technology',
+      'Printing and paper',
+      'Safety and rescue technology',
+      'Clothing and accessories',
+      'Services from agriculture, forestry, fishery, horticulture',
+      'Multimedia',
+      'Machine tools and equipment',
+      'Construction',
+      'Lighting technology',
+      'Training and education',
+      'Food and beverage',
+      'Hygiene and cosmetic products',
+      'Textile production'
+    ];
+
+    const prompt = `You are an expert B2B industry classifier for a German manufacturing/industrial marketplace.
+
+COMPANY DATA:
+- Industry: ${industry}
+- Description: ${description}
+- Categories: ${categories}
+- Keywords: ${keywords}
+- Country: ${country}
+- Employee Count: ${hasEmployeeData ? employeeCount : 'NOT PROVIDED - MUST ESTIMATE'}
+- Employee Range: ${sizeCategory}
+- Revenue: ${revenue}
+
+YOUR TASK: Classify this company according to these ICP criteria:
+
+1. INDUSTRY - Match to industries from this list (can be MULTIPLE, but LIMIT TO 5 MAX):
+${icpIndustries.map((ind, idx) => `${idx + 1}. ${ind}`).join('\n')}
+
+IMPORTANT: 
+- Search ALL fields: Industry, Description, Categories, AND Keywords
+- List up to 5 industries if multiple truly apply (semicolon-separated)
+- If no good match exists, use format: "Other: [original industry name]"
+- Only list multiple if genuinely applicable (not just loosely related)
+- Pay special attention to German terms:
+  * "Glas" / "Schauglas" / "Sichtglas" = Glass and ceramic products
+  * "Armaturen" = Valve technology or fittings
+  * "Behälter" = Containers
+  * "Anlagen" = Plant construction
+  * "Maschinen" = Machinery
+
+2. SUPPLIER TYPE - Choose ALL that truly apply (semicolon-separated if multiple):
+- Manufacturer (produces/manufactures products)
+- Customer Specific Manufacturing (custom manufacturing)
+- Distributor (distributes products)
+- Wholesaler (wholesale trading)
+- Service Provider (primarily services)
+
+Example: "Manufacturer; Distributor" if they both manufacture AND distribute
+Only use multiple if the company genuinely operates in both capacities.
+
+3. EMPLOYEE SIZE ESTIMATION:
+Current data: ${hasEmployeeData ? `${employeeCount} employees (${sizeCategory})` : 'NO EMPLOYEE DATA PROVIDED'}
+
+${!hasEmployeeData ? `
+🚨 CRITICAL: Since NO employee data was provided, you MUST make an EDUCATED GUESS based on:
+- Company description (scale indicators: "leading", "international", "small team", "startup", etc.)
+- Revenue/funding indicators
+- Distribution area (Regional = smaller, International = larger)
+- Market presence and maturity
+- Office locations mentioned
+- Technology stack complexity
+
+⚠️ IMPORTANT ESTIMATION GUIDELINES - BE CONSERVATIVE (bias toward SMALLER sizes):
+- "Small startup" / "small team" / "boutique" / "family business" → 5-9
+- "Growing company" / "established local" / "supplier" → 10-19
+- "Established manufacturer" / "regional distributor" → 20-49
+- "National presence" / "leading regional" → 20-49 or 50-99
+- "European presence" / "international" → 50-99 or 100-199
+- "Major manufacturer" / "leading European" → 100-199
+- "Global leader" / "multinational" / "enterprise" → 200-499
+- Only use 500+ for very clear indicators like "Fortune 500", "thousands of employees", "10+ offices worldwide"
+
+DEFAULT: When in doubt, estimate 10-19 (most common for specialized B2B suppliers)
+
+Choose from: 1-4, 5-9, 10-19, 20-49, 50-99, 100-199, 200-499, 500+
+Add "(estimated)" after your guess, e.g., "20-49 (estimated)"
+` : `
+Employee data available: ${employeeCount} (${sizeCategory})
+No estimation needed.
+`}
+
+4. DISTRIBUTION AREA - Based on company description and size:
+- Regional (local/city/state level operations)
+- National (operates across one country)
+- European (multiple European countries)
+- International (global/worldwide operations)
+
+5. ICP MATCH CRITERIA (ALL must pass):
+✓ Country: MUST be Germany, Austria, or Switzerland
+✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
+✓ Industry: MUST match at least one from the list above (not "Other:")
+✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
+✓ Supplier Type: All types accepted
+
+RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
+{
+  "industry": "up to 5 exact industry names from list or Other: [name]",
+  "supplier_type": "one or more types semicolon-separated",
+  "distribution_area": "one of the 4 areas above",
+  "employees": "${hasEmployeeData ? sizeCategory : 'your estimated range (estimated)'}",
+  "icp_match": true or false,
+  "reason": "brief explanation with ✓ for pass, ✗ for fail, ~ for partial. ${!hasEmployeeData ? 'Explain your size estimation reasoning.' : ''}"
+}`;
+
+    try {
+      if (!OPENAI_API_KEY || OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE') {
+        console.warn('⚠️ OpenAI API key not set, using fallback classification');
+        return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
+      }
+
+      console.log('🤖 Calling GPT-4 for intelligent classification...');
+      
+      const gptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert B2B industry classifier. Respond ONLY with valid JSON, no markdown formatting, no backticks, no extra text. When employee data is missing, you MUST estimate based on available context and provide only the range (not exact numbers).'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.2,
+          max_tokens: 500
+        })
+      });
+
+      if (gptResponse.ok) {
+        const gptData = await gptResponse.json();
+        let responseText = gptData.choices[0].message.content.trim();
+        
+        responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        
+        console.log('✅ GPT-4 Response:', responseText);
+        
+        const classification = JSON.parse(responseText);
+        classification.domain_found = true;
+        return classification;
+      } else {
+        const errorText = await gptResponse.text();
+        console.error('❌ GPT-4 API failed:', gptResponse.status, errorText);
+        throw new Error(`GPT-4 API failed: ${gptResponse.status}`);
+      }
+    } catch (err) {
+      console.error('❌ GPT-4 classification error:', err);
+      console.warn('⚠️ Falling back to simple classification');
+      return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
+    }
+  };
+
+  const fallbackClassification = (ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData) => {
+    const descLower = description.toLowerCase();
+    const categories = (ceData?.categories || []).join('; ');
+    const keywords = (ceData?.keywords || []).join('; ');
+    
+    if (!hasEmployeeData || sizeCategory === 'Unknown') {
+      console.log('⚠️ No employee data, estimating from description...');
+      
+      const sizeIndicators = {
+        'startup': '5-9',
+        'small team': '5-9',
+        'small business': '5-9',
+        'boutique': '5-9',
+        'family business': '5-9',
+        'growing': '10-19',
+        'established': '20-49',
+        'medium': '20-49',
+        'medium-sized': '20-49',
+        'leading': '50-99',
+        'major': '100-199',
+        'large': '100-199',
+        'enterprise': '200-499',
+        'global leader': '200-499',
+        'multinational': '200-499',
+        'fortune 500': '500+',
+        'thousands of employees': '500+'
+      };
+      
+      let estimatedSize = null;
+      
+      for (const [indicator, range] of Object.entries(sizeIndicators)) {
+        if (descLower.includes(indicator)) {
+          estimatedSize = range + ' (estimated)';
+          console.log(`✅ Found "${indicator}" → estimated ${range}`);
+          break;
+        }
+      }
+      
+      if (!estimatedSize) {
+        if (descLower.includes('global') || descLower.includes('worldwide') || descLower.includes('multinational')) {
+          estimatedSize = '100-199 (estimated)';
+        } else if (descLower.includes('international')) {
+          estimatedSize = '50-99 (estimated)';
+        } else if (descLower.includes('europe') || descLower.includes('european')) {
+          estimatedSize = '20-49 (estimated)';
+        } else if (descLower.includes('national')) {
+          estimatedSize = '10-19 (estimated)';
+        } else {
+          estimatedSize = '10-19 (estimated)';
+        }
+      }
+      
+      sizeCategory = estimatedSize;
+    }
+    
+    const matchedIndustries = [];
+    const searchText = `${industry} ${description} ${categories} ${keywords}`.toLowerCase();
+    
+    console.log('🔍 Searching in text:', searchText.substring(0, 200));
+    
+    const industryKeywordMap = {
+      'Glass and ceramic products': ['glass', 'glas', 'ceramic', 'keramik', 'schauglas', 'sichtglas', 'glasprodukt', 'glaswaren'],
+      'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium'],
+      'Valve technology': ['valve', 'ventil', 'armaturen', 'fitting', 'fittings'],
+      'Pipe and hose technology': ['pipe', 'rohr', 'hose', 'schlauch', 'rohrleitung'],
+      'Electrical engineering': ['electrical', 'elektro', 'electric', 'electronics'],
+      'Control technology': ['control', 'steuerung', 'automation', 'regelung'],
+      'Industrial supplies': ['industrial', 'industrie', 'supplies', 'zubehör', 'industrial supplies'],
+      'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge'],
+      'Process technology': ['process', 'prozess'],
+      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering'],
+      'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications'],
+      'Wood and wood products': ['wood', 'holz', 'timber'],
+      'Plastics and plastic products': ['plastic', 'kunststoff', 'polymer'],
+      'Printing and paper': ['printing', 'druck', 'paper', 'papier'],
+      'Food technology': ['food', 'lebensmittel', 'beverage', 'getränke'],
+      'Packaging machinery': ['packaging', 'verpackung'],
+      'Cleaning supplies': ['cleaning', 'reinigung'],
+      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung']
+    };
+    
+    const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
+    
+    for (const ind of priorityIndustries) {
+      if (matchedIndustries.length >= 5) break;
+      if (!icpIndustries.includes(ind)) continue;
+      
+      if (industryKeywordMap[ind]) {
+        for (const keyword of industryKeywordMap[ind]) {
+          if (searchText.includes(keyword)) {
+            matchedIndustries.push(ind);
+            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+            break;
+          }
+        }
+      }
+    }
+    
+    for (const ind of icpIndustries) {
+      if (matchedIndustries.length >= 5) break;
+      if (matchedIndustries.includes(ind)) continue;
+      
+      const indLower = ind.toLowerCase();
+      
+      if (industryKeywordMap[ind]) {
+        for (const keyword of industryKeywordMap[ind]) {
+          if (searchText.includes(keyword)) {
+            matchedIndustries.push(ind);
+            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+            break;
+          }
+        }
+      } else {
+        const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
+        if (searchText.includes(indLower) || searchText.includes(mainWords)) {
+          matchedIndustries.push(ind);
+        }
+      }
+    }
+    
+    const finalIndustry = matchedIndustries.length > 0 
+      ? matchedIndustries.join('; ')
+      : (industry ? `Other: ${industry}` : 'Unknown');
+
+    const supplierTypes = [];
+    
+    if (descLower.includes('manufactur') || descLower.includes('production')) {
+      if (descLower.includes('custom')) {
+        supplierTypes.push('Customer Specific Manufacturing');
+      } else {
+        supplierTypes.push('Manufacturer');
+      }
+    }
+    
+    if (descLower.includes('distribut')) supplierTypes.push('Distributor');
+    if (descLower.includes('wholesal')) supplierTypes.push('Wholesaler');
+    if (descLower.includes('service') || descLower.includes('consulting')) {
+      supplierTypes.push('Service Provider');
+    }
+    
+    if (supplierTypes.length === 0) supplierTypes.push('Service Provider');
+    
+    const finalSupplierType = supplierTypes.join('; ');
+
+    let distArea = 'Regional';
+    
+    if (descLower.includes('global') || descLower.includes('worldwide')) {
+      distArea = 'International';
+    } else if (descLower.includes('europe') || descLower.includes('european')) {
+      distArea = 'European';
+    } else if (descLower.includes('national') || employeeCount > 100) {
+      distArea = 'National';
+    }
+
+    const reasons = [];
+    let isICP = true;
+
+    const countryLower = country.toLowerCase();
+    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
+                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
+                   countryLower.includes('österreich') || countryLower.includes('schweiz');
+    
+    if (!isDACH && country) {
+      isICP = false;
+      reasons.push(`✗ Country not DACH (${country})`);
+    } else if (isDACH) {
+      reasons.push(`✓ DACH region`);
+    }
+
+    const actualSizeCategory = sizeCategory.replace(' (estimated)', '');
+    const icpSizes = ['5-9', '10-19', '20-49', '50-99', '100-199', '200-499'];
+    
+    if (!icpSizes.includes(actualSizeCategory)) {
+      if (actualSizeCategory !== 'Unknown') {
+        isICP = false;
+        reasons.push(`✗ Size ${sizeCategory} outside ICP range`);
+      }
+    } else {
+      reasons.push(`✓ ICP size: ${sizeCategory}`);
+    }
+
+    if (matchedIndustries.length === 0) {
+      isICP = false;
+      reasons.push(`✗ Industry not in ICP list`);
+    } else {
+      reasons.push(`✓ Industry match`);
+    }
+    
+    return {
+      industry: finalIndustry,
+      supplier_type: finalSupplierType,
+      distribution_area: distArea,
+      employees: sizeCategory,
+      icp_match: isICP,
+      reason: reasons.join(' | '),
+      domain_found: true
+    };
+  };
+
+  const handleSearch = async () => {
+    if (!domain.trim()) return;
+    
+    setIsLoading(true);
+    setError('');
+    setCompanyData(null);
+    setApiErrors([]);
+    setProgress('Starting enrichment...');
+    setEmployees([]);
+    setSelectedEmployees([]);
+    setRevealedContacts([]);
+    setEmployeePage(1);
+
+    try {
+      const cleanedDomain = cleanDomain(domain);
+      console.log('🔍 Searching for:', cleanedDomain);
+
+      let ceData = null;
+      let wizaData = null;
+      const errors = [];
+
+      setProgress('Calling CompanyEnrich API...');
+      try {
+        const ceResponse = await fetch(`https://api.companyenrich.com/companies/enrich?domain=${cleanedDomain}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${COMPANYENRICH_API_KEY}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (ceResponse.ok) {
+          ceData = await ceResponse.json();
+          console.log('✅ CompanyEnrich:', ceData);
+        } else {
+          const errorText = await ceResponse.text();
+          console.warn('⚠️ CompanyEnrich failed:', ceResponse.status, errorText);
+          errors.push(`CompanyEnrich: ${ceResponse.status}`);
+        }
+      } catch (err) {
+        console.error('❌ CompanyEnrich error:', err);
+        errors.push(`CompanyEnrich: ${err.message}`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setProgress('Calling Wiza API...');
+      try {
+        const wizaResponse = await fetch('https://wiza.co/api/company_enrichments', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${WIZA_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            company_domain: cleanedDomain
+          })
+        });
+
+        if (wizaResponse.ok) {
+          wizaData = await wizaResponse.json();
+          console.log('✅ Wiza:', wizaData);
+        } else {
+          const errorText = await wizaResponse.text();
+          console.warn('⚠️ Wiza failed:', wizaResponse.status, errorText);
+          errors.push(`Wiza: ${wizaResponse.status}`);
+        }
+      } catch (err) {
+        console.error('❌ Wiza error:', err);
+        errors.push(`Wiza: ${err.message}`);
+      }
+
+      setApiErrors(errors);
+
+      // Continue even if both APIs fail
+      setProgress('Analyzing with AI...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const classification = await classifyWithGPT4(ceData, wizaData);
+
+      // Skip e-commerce detection
+      // setProgress('Checking for e-commerce...');
+      // const websiteToCheck = ceData?.website || `https://${cleanedDomain}`;
+      // const ecommerceInfo = await detectEcommerce(websiteToCheck);
+      // console.log('🛒 E-commerce detection result:', ecommerceInfo);
+
+      const combinedData = {
+        ce_name: ceData?.name || '',
+        ce_domain: ceData?.domain || cleanedDomain,
+        ce_website: ceData?.website || `https://${cleanedDomain}`,
+        ce_industry: ceData?.industry || '',
+        ce_description: ceData?.description || '',
+        ce_founded_year: ceData?.founded_year || '',
+        ce_employees: ceData?.employees || '',
+        ce_industries: (ceData?.industries || []).join('; '),
+        ce_keywords: (ceData?.keywords || []).join('; '),
+        ce_technologies: (ceData?.technologies || []).join('; '),
+        ce_address: ceData?.location?.address || '',
+        ce_postal_code: ceData?.location?.postal_code || '',
+        ce_phone: ceData?.location?.phone || '',
+        ce_city_name: ceData?.location?.city?.name || '',
+        ce_state_name: ceData?.location?.state?.name || '',
+        ce_country_name: ceData?.location?.country?.name || '',
+        ce_stock_symbol: ceData?.financial?.stock_symbol || '',
+        ce_stock_exchange: ceData?.financial?.stock_exchange || '',
+        ce_total_funding: ceData?.financial?.total_funding || '',
+        ce_funding_stage: ceData?.financial?.funding_stage || '',
+        ce_linkedin_url: ceData?.socials?.linkedin_url || '',
+        ce_twitter_url: ceData?.socials?.twitter_url || '',
+        ce_facebook_url: ceData?.socials?.facebook_url || '',
+        
+        wiza_company_name: wizaData?.data?.company_name || '',
+        wiza_company_industry: wizaData?.data?.company_industry || '',
+        wiza_company_description: wizaData?.data?.company_description || '',
+        wiza_company_size: wizaData?.data?.company_size || '',
+        wiza_company_size_range: wizaData?.data?.company_size_range || '',
+        wiza_company_revenue_range: wizaData?.data?.company_revenue_range || '',
+        wiza_company_type: wizaData?.data?.company_type || '',
+        wiza_company_founded: wizaData?.data?.company_founded || '',
+        wiza_company_location: wizaData?.data?.company_location || '',
+        wiza_company_country: wizaData?.data?.company_country || '',
+        wiza_company_region: wizaData?.data?.company_region || '',
+        wiza_company_funding: wizaData?.data?.company_funding || '',
+        wiza_company_linkedin: wizaData?.data?.company_linkedin || '',
+        
+        final_industry: classification.industry,
+        final_supplier_type: classification.supplier_type,
+        final_distribution_area: classification.distribution_area,
+        final_employees: classification.employees,
+        icp_match: classification.icp_match,
+        final_reason: classification.reason,
+        domain_found: classification.domain_found !== false,
+        
+        // ecommerce_detected: ecommerceInfo.hasEcommerce,
+        // ecommerce_platform: ecommerceInfo.platform,
+        // ecommerce_confidence: ecommerceInfo.confidence,
+        // ecommerce_indicators: ecommerceInfo.indicators,
+        
+        _api_sources: {
+          companyenrich: !!ceData,
+          wiza: !!wizaData
+        }
+      };
+
+      console.log('📊 Final combined data:', combinedData);
+      setCompanyData(combinedData);
+      setProgress('');
+    } catch (err) {
+      console.error('💥 Fatal error:', err);
+      setError(`Fatal error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
+
+  const searchEmployees = async (page = 1) => {
+    if (!companyData) return;
+    
+    setIsLoadingEmployees(true);
+    setError('');
+    
+    try {
+      let searchDomain = companyData.ce_domain || domain;
+      searchDomain = searchDomain.replace('https://', '').replace('http://', '').replace('www.', '').trim();
+      
+      console.log('🔍 Searching for employees at domain:', searchDomain, 'Page:', page);
+      
+      const payload = {
+        company_domain: searchDomain,
+        size: 30,
+        page: page
+      };
+      
+      const response = await fetch('https://wiza-proxy.onrender.com/api/wiza/search-employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const responseText = await response.text();
+      
+      if (!response.ok || (response.ok && JSON.parse(responseText).data?.total === 0)) {
+        const companyName = companyData.ce_name || companyData.wiza_company_name;
+        
+        if (companyName && page === 1) {
+          console.log('⚠️ Domain search failed, trying company name:', companyName);
+          
+          const namePayload = {
+            company_domain: companyName,
+            size: 30,
+            page: page
+          };
+          
+          const nameResponse = await fetch('https://wiza-proxy.onrender.com/api/wiza/search-employees', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(namePayload)
+          });
+          
+          const nameResponseText = await nameResponse.text();
+          
+          if (nameResponse.ok) {
+            const data = JSON.parse(nameResponseText);
+            const profiles = data.data?.profiles || [];
+            
+            const normalizedProfiles = profiles.map((p, idx) => ({
+              ...p,
+              linkedin: p.linkedin || p.linkedin_url || p.profile_url || p.url || '',
+              uniqueKey: p.linkedin || `employee-${idx}-${Date.now()}`
+            }));
+            
+            if (page === 1) {
+              setEmployees(normalizedProfiles);
+            } else {
+              setEmployees(prev => [...prev, ...normalizedProfiles]);
+            }
+            
+            setHasMoreEmployees(normalizedProfiles.length === 30);
+            setEmployeePage(page);
+            
+            setTimeout(() => {
+              if (employeesRef.current && page === 1) {
+                employeesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
+            
+            return;
+          }
+        }
+      }
+      
+      if (response.ok) {
+        const data = JSON.parse(responseText);
+        const profiles = data.data?.profiles || [];
+        
+        const normalizedProfiles = profiles.map((p, idx) => ({
+          ...p,
+          linkedin: p.linkedin || p.linkedin_url || p.profile_url || p.url || '',
+          uniqueKey: p.linkedin || `employee-${idx}-${Date.now()}`
+        }));
+        
+        if (page === 1) {
+          setEmployees(normalizedProfiles);
+        } else {
+          setEmployees(prev => [...prev, ...normalizedProfiles]);
+        }
+        
+        setHasMoreEmployees(normalizedProfiles.length === 30);
+        setEmployeePage(page);
+        
+        setTimeout(() => {
+          if (employeesRef.current && page === 1) {
+            employeesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+        
+        if (profiles.length === 0 && page === 1) {
+          setError(`No employees found for this company.`);
+        }
+      } else {
+        console.error('❌ Employee search failed:', response.status);
+        
+        if (response.status === 0 || responseText.includes('Failed to fetch')) {
+          setError('❌ Cannot connect to proxy server. Make sure to run: python wiza_proxy.py');
+        } else {
+          setError(`Failed to search employees (${response.status})`);
+        }
+      }
+    } catch (err) {
+      console.error('❌ Employee search error:', err);
+      if (err.message && err.message.includes('Failed to fetch')) {
+        setError('❌ Cannot connect to proxy server. Make sure proxy is running.');
+      } else {
+        setError(`Error searching employees: ${err.message || 'Unknown error'}`);
+      }
+    } finally {
+      setIsLoadingEmployees(false);
+    }
+  };
+
+  const loadMoreEmployees = () => {
+    searchEmployees(employeePage + 1);
+  };
+
+  const toggleEmployeeSelection = (employeeKey) => {
+    setSelectedEmployees(prev => {
+      const isSelected = prev.includes(employeeKey);
+      if (isSelected) {
+        return prev.filter(id => id !== employeeKey);
+      } else {
+        return [...prev, employeeKey];
+      }
+    });
+  };
+
+  const revealSelectedEmployees = async () => {
+    if (selectedEmployees.length === 0) {
+      alert('Please select at least one employee to reveal');
+      return;
+    }
+    
+    setIsLoadingEmployees(true);
+    const newRevealedContacts = [];
+    
+    try {
+      for (let i = 0; i < selectedEmployees.length; i++) {
+        const employeeKey = selectedEmployees[i];
+        const employee = employees.find(e => e.uniqueKey === employeeKey);
+        
+        if (!employee || !employee.linkedin) continue;
+        
+        setProgress(`Revealing ${i + 1}/${selectedEmployees.length}: ${employee.full_name || employee.name}...`);
+        
+        try {
+          const revealPayload = {
+            linkedin_url: employee.linkedin,
+            enrichment_level: "full"
+          };
+          
+          const revealResponse = await fetch('https://wiza-proxy.onrender.com/api/wiza/individual-reveal', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(revealPayload)
+          });
+          
+          if (revealResponse.ok) {
+            const revealData = await revealResponse.json();
+            const revealId = revealData.data.id;
+            
+            let completed = false;
+            let attempts = 0;
+            const maxAttempts = 30;
+            
+            while (!completed && attempts < maxAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 3000));
+              
+              const statusResponse = await fetch(`https://wiza-proxy.onrender.com/api/wiza/individual-reveal/${revealId}`, {
+                method: 'GET'
+              });
+              
+              if (statusResponse.ok) {
+                const statusData = await statusResponse.json();
+                
+                if (statusData.data.is_complete) {
+                  completed = true;
+                  newRevealedContacts.push({
+                    ...employee,
+                    revealed_data: statusData.data
+                  });
+                }
+              }
+              
+              attempts++;
+            }
+          }
+          
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+        } catch (err) {
+          console.error(`❌ Error revealing ${employee.full_name}:`, err);
+        }
+      }
+      
+      setRevealedContacts(prev => [...prev, ...newRevealedContacts]);
+      setProgress('');
+      
+      if (newRevealedContacts.length > 0) {
+        setTimeout(() => {
+          const revealedSection = document.getElementById('revealed-contacts');
+          if (revealedSection) {
+            revealedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+        
+        alert(`✅ Successfully revealed ${newRevealedContacts.length} contacts!`);
+      } else {
+        alert(`❌ Could not reveal any contacts. Check console (F12) for details.`);
+      }
+      
+    } catch (err) {
+      console.error('❌ Reveal error:', err);
+      setError(`Error revealing employees: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsLoadingEmployees(false);
+      setSelectedEmployees([]);
+    }
+  };
+
+  const sendToLionel = () => {
+    if (!companyData) return;
+    
+    const emailData = {
+      to: 'lionel@visable.com',
+      subject: `ICP Check: ${companyData.ce_name || companyData.wiza_company_name || domain}`,
+      body: `Company: ${companyData.ce_name || companyData.wiza_company_name}
+Domain: ${companyData.ce_domain}
+ICP Match: ${companyData.icp_match ? 'YES ✓' : 'NO ✗'}
+
+Industry: ${companyData.final_industry}
+Supplier Type: ${companyData.final_supplier_type}
+Distribution: ${companyData.final_distribution_area}
+Employees: ${companyData.final_employees}
+
+Country: ${companyData.ce_country_name || companyData.wiza_company_country}
+Website: ${companyData.ce_website}
+
+Reasoning: ${companyData.final_reason}
+      `
+    };
+    
+    const mailtoLink = `mailto:${emailData.to}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
+    window.location.href = mailtoLink;
+  };
+
+  // Determine status color and blocker type
+  const getStatusInfo = () => {
+    if (!companyData.domain_found) {
+      return { color: visableGray, text: 'Domain Not Found', icon: 'alert' };
+    }
+    
+    if (companyData.icp_match) {
+      return { color: '#86efac', text: 'ICP Match ✓', icon: 'check' };
+    }
+    
+    // Analyze what's blocking ICP match
+    const reasons = companyData.final_reason || '';
+    const industry = companyData.final_industry || '';
+    const employees = companyData.final_employees || '';
+    const supplierType = companyData.final_supplier_type || '';
+    const country = companyData.ce_country_name || companyData.wiza_company_country || '';
+    
+    // Hard blockers (RED)
+    const countryLower = country.toLowerCase();
+    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
+                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
+                   countryLower.includes('österreich') || countryLower.includes('schweiz');
+    
+    if (!isDACH && country) {
+      return { color: '#ef4444', text: 'ICP Blocker: Country', icon: 'x' };
+    }
+    
+    // Check employee size - hard blocker if 1-4 or 500+
+    const employeeRange = employees.replace(' (estimated)', '');
+    if (employeeRange === '1-4' || employeeRange === '500+') {
+      return { color: '#ef4444', text: 'ICP Blocker: Employee Size', icon: 'x' };
+    }
+    
+    // Check if ONLY Service Provider (hard blocker)
+    if (supplierType === 'Service Provider' && !supplierType.includes(';')) {
+      return { color: '#ef4444', text: 'ICP Blocker: Service Provider Only', icon: 'x' };
+    }
+    
+    // Soft blocker (ORANGE) - Industry is the only issue
+    if (industry.startsWith('Other:')) {
+      return { color: visableOrange, text: 'ICP Blocker: Industry Not in List', icon: 'alert' };
+    }
+    
+    // Mixed/Other blockers (YELLOW)
+    return { color: '#fbbf24', text: 'Not ICP Match', icon: 'x' };
+  };
+
+  const statusInfo = companyData ? getStatusInfo() : null;
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', fontFamily: 'Arial, sans-serif', padding: '48px 24px' }}>
+      <style>
+        {`
+          @keyframes spin { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+          }
+        `}
+      </style>
+
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <svg width="200" height="60" viewBox="0 0 200 60" style={{ height: '48px', marginBottom: '24px' }}>
+            <text x="10" y="40" fill={visableNavy} fontSize="32" fontWeight="bold" fontFamily="Arial, sans-serif">
+              visable
+            </text>
+            <circle cx="12" cy="15" r="6" fill={visableGreen} />
+          </svg>
+          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
+            ICP Checker
+          </h1>
+          <p style={{ fontSize: '18px', color: '#6b7280' }}>
+            AI-powered company enrichment and ICP verification
+          </p>
+        </div>
+
+        {/* Search Box */}
+        <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginBottom: '32px' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+              Company Domain
+            </label>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <Search style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#9ca3af',
+                  width: '20px',
+                  height: '20px'
+                }} />
+                <input
+                  type="text"
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="example.com"
+                  disabled={isLoading}
+                  style={{
+                    width: '100%',
+                    paddingLeft: '48px',
+                    paddingRight: '16px',
+                    paddingTop: '16px',
+                    paddingBottom: '16px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '12px',
+                    outline: 'none',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = visableGreen}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+              <button
+                onClick={handleSearch}
+                disabled={!domain.trim() || isLoading}
+                style={{
+                  padding: '16px 32px',
+                  backgroundColor: domain.trim() && !isLoading ? visableGreen : '#d1d5db',
+                  color: 'white',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: domain.trim() && !isLoading ? 'pointer' : 'not-allowed',
+                  fontSize: '16px',
+                  transition: 'background-color 0.2s',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {isLoading ? 'Checking...' : 'Check ICP'}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div style={{
+              padding: '16px',
+              backgroundColor: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '8px',
+              color: '#991b1b',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'start',
+              gap: '8px',
+              whiteSpace: 'pre-line'
+            }}>
+              <AlertCircle style={{ width: '20px', height: '20px', flexShrink: 0, marginTop: '2px' }} />
+              <div>{error}</div>
+            </div>
+          )}
+
+          {apiErrors.length > 0 && !error && (
+            <div style={{
+              padding: '16px',
+              backgroundColor: '#fef3c7',
+              border: '1px solid #fde047',
+              borderRadius: '8px',
+              color: '#92400e',
+              fontSize: '13px'
+            }}>
+              <div style={{ fontWeight: '600', marginBottom: '8px' }}>⚠️ API Warnings:</div>
+              {apiErrors.map((err, idx) => (
+                <div key={idx} style={{ marginBottom: '4px' }}>• {err}</div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '48px',
+            textAlign: 'center',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}>
+            <Loader style={{ width: '56px', height: '56px', color: visableGreen, animation: 'spin 1s linear infinite', margin: '0 auto 24px' }} />
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
+              🔍 Enriching Company Data
+            </h2>
+            <p style={{ color: '#6b7280', marginBottom: '24px', fontSize: '16px' }}>
+              Gathering information from multiple sources...
+            </p>
+            {progress && (
+              <div style={{
+                padding: '16px',
+                backgroundColor: '#eff6ff',
+                borderRadius: '12px',
+                color: '#1e40af',
+                fontSize: '15px',
+                fontWeight: '600',
+                marginBottom: '12px'
+              }}>
+                {progress}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Results Section */}
+        {companyData && !isLoading && (
+          <div>
+            {/* Status Header */}
+            <div style={{
+              backgroundColor: !companyData.domain_found ? '#f3f4f6' : (companyData.icp_match ? '#dcfce7' : (statusInfo.color === visableOrange ? '#fff7ed' : '#fef2f2')),
+              border: `2px solid ${statusInfo.color}`,
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                {statusInfo.icon === 'alert' ? (
+                  <AlertCircle style={{ width: '64px', height: '64px', color: statusInfo.color === visableGray ? visableGray : visableOrange }} />
+                ) : statusInfo.icon === 'check' ? (
+                  <CheckCircle style={{ width: '64px', height: '64px', color: '#16a34a' }} />
+                ) : (
+                  <XCircle style={{ width: '64px', height: '64px', color: '#ef4444' }} />
+                )}
+                <div>
+                  <h2 style={{ 
+                    fontSize: '32px', 
+                    fontWeight: 'bold', 
+                    color: !companyData.domain_found ? visableGray : (companyData.icp_match ? '#166534' : (statusInfo.color === visableOrange ? '#9a3412' : '#991b1b')), 
+                    marginBottom: '8px' 
+                  }}>
+                    {statusInfo.text}
+                  </h2>
+                  <p style={{ 
+                    fontSize: '18px', 
+                    color: !companyData.domain_found ? '#6b7280' : (companyData.icp_match ? '#15803d' : (statusInfo.color === visableOrange ? '#c2410c' : '#991b1b')), 
+                    marginBottom: '8px' 
+                  }}>
+                    {companyData.ce_name || companyData.wiza_company_name || domain}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {companyData.domain_found && (
+              <>
+                {/* Full Company Details Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+                  {/* Left Column */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    {/* Company Overview */}
+                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <div>
+                          <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>
+                            {companyData.ce_name || companyData.wiza_company_name || domain}
+                          </h3>
+                          {companyData.ce_website && (
+                            <a href={companyData.ce_website} target="_blank" rel="noopener noreferrer" style={{
+                              color: '#3b82f6', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none'
+                            }}>
+                              {companyData.ce_domain || domain}
+                              <ExternalLink style={{ width: '14px', height: '14px' }} />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {(companyData.ce_description || companyData.wiza_company_description) && (
+                        <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '20px' }}>
+                          {companyData.ce_description || companyData.wiza_company_description}
+                        </p>
+                      )}
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                        {companyData.ce_founded_year && (
+                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                              <Calendar style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Founded</span>
+                            </div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
+                              {companyData.ce_founded_year}
+                            </div>
+                          </div>
+                        )}
+
+                        {(companyData.final_employees || companyData.wiza_company_size || companyData.ce_employees) && (
+                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                              <Users style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Employees</span>
+                            </div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
+                              {companyData.final_employees || companyData.wiza_company_size || companyData.ce_employees}
+                            </div>
+                            {companyData.final_employees && companyData.final_employees.includes('(estimated)') && (
+                              <div style={{ fontSize: '11px', color: '#ea580c', marginTop: '4px', fontWeight: '600' }}>
+                                🤖 AI Estimated
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {companyData.wiza_company_revenue_range && (
+                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                              <DollarSign style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Revenue</span>
+                            </div>
+                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#111827' }}>
+                              {companyData.wiza_company_revenue_range}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* ICP Classification */}
+                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Target style={{ width: '24px', height: '24px', color: visableGreen }} />
+                        ICP Classification
+                      </h3>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>
+                            Industry {companyData.final_industry.includes(';') && '(Multiple)'}
+                          </div>
+                          <div style={{ padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#166534', lineHeight: '1.5' }}>
+                            {companyData.final_industry}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>
+                            Supplier Type {companyData.final_supplier_type.includes(';') && '(Multiple)'}
+                          </div>
+                          <div style={{ padding: '12px', backgroundColor: '#eff6ff', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#1e40af', lineHeight: '1.5' }}>
+                            {companyData.final_supplier_type}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>Distribution Area</div>
+                          <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#92400e' }}>
+                            {companyData.final_distribution_area}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>Employee Range</div>
+                          <div style={{ padding: '12px', backgroundColor: '#f3e8ff', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#6b21a8' }}>
+                            {companyData.final_employees}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                          Analysis Reasoning
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.6' }}>
+                          {companyData.final_reason}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Keywords */}
+                    {companyData.ce_keywords && (
+                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                          Keywords
+                        </h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                          {companyData.ce_keywords.split(';').slice(0, 15).map((kw, idx) => (
+                            <span key={idx} style={{
+                              padding: '6px 12px', backgroundColor: '#f0fdf4', color: '#166534',
+                              borderRadius: '6px', fontSize: '13px', fontWeight: '500'
+                            }}>
+                              {kw.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Technologies */}
+                    {companyData.ce_technologies && (
+                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Zap style={{ width: '24px', height: '24px', color: visableGreen }} />
+                          Technology Stack
+                        </h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                          {companyData.ce_technologies.split(';').slice(0, 20).map((tech, idx) => (
+                            <span key={idx} style={{
+                              padding: '6px 12px', backgroundColor: '#eff6ff', color: '#1e40af',
+                              borderRadius: '6px', fontSize: '13px', fontWeight: '500'
+                            }}>
+                              {tech.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    {/* Location */}
+                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <MapPin style={{ width: '20px', height: '20px', color: visableGreen }} />
+                        Location
+                      </h3>
+                      <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.8' }}>
+                        {companyData.ce_city_name && (
+                          <div style={{ marginBottom: '8px' }}>
+                            <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_city_name}</div>
+                            {companyData.ce_state_name && <div>{companyData.ce_state_name}</div>}
+                          </div>
+                        )}
+                        {companyData.ce_country_name && (
+                          <div style={{ marginBottom: '8px' }}>
+                            <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_country_name}</div>
+                            {companyData.wiza_company_region && <div>{companyData.wiza_company_region}</div>}
+                          </div>
+                        )}
+                        {companyData.ce_address && (
+                          <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+                            <div>{companyData.ce_address}</div>
+                            {companyData.ce_postal_code && <div>{companyData.ce_postal_code}</div>}
+                            {companyData.ce_phone && <div style={{ marginTop: '8px', color: '#3b82f6' }}>{companyData.ce_phone}</div>}
+                          </div>
+                        )}
+                        {companyData.wiza_company_location && !companyData.ce_city_name && (
+                          <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.wiza_company_location}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Funding */}
+                    {(companyData.ce_total_funding || companyData.wiza_company_funding) && (
+                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Award style={{ width: '20px', height: '20px', color: visableGreen }} />
+                          Funding
+                        </h3>
+                        <div style={{ marginBottom: '16px' }}>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Total Funding</div>
+                          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
+                            {companyData.ce_total_funding || companyData.wiza_company_funding}
+                          </div>
+                        </div>
+                        {companyData.ce_funding_stage && (
+                          <div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Stage</div>
+                            <div style={{ padding: '8px 12px', backgroundColor: '#f0fdf4', borderRadius: '6px', fontSize: '14px', fontWeight: '600', color: '#166534', display: 'inline-block' }}>
+                              {companyData.ce_funding_stage}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Social Links */}
+                    {(companyData.ce_linkedin_url || companyData.ce_twitter_url || companyData.ce_facebook_url) && (
+                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>Social Profiles</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          {companyData.ce_linkedin_url && (
+                            <a href={companyData.ce_linkedin_url} target="_blank" rel="noopener noreferrer" style={{
+                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                            }}>
+                              <Linkedin style={{ width: '20px', height: '20px', color: '#0077b5' }} />
+                              <span style={{ fontSize: '14px', fontWeight: '500' }}>LinkedIn</span>
+                            </a>
+                          )}
+                          {companyData.ce_twitter_url && (
+                            <a href={companyData.ce_twitter_url} target="_blank" rel="noopener noreferrer" style={{
+                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                            }}>
+                              <Twitter style={{ width: '20px', height: '20px', color: '#1da1f2' }} />
+                              <span style={{ fontSize: '14px', fontWeight: '500' }}>Twitter</span>
+                            </a>
+                          )}
+                          {companyData.ce_facebook_url && (
+                            <a href={companyData.ce_facebook_url} target="_blank" rel="noopener noreferrer" style={{
+                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                            }}>
+                              <Facebook style={{ width: '20px', height: '20px', color: '#4267b2' }} />
+                              <span style={{ fontSize: '14px', fontWeight: '500' }}>Facebook</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Stock Info */}
+                    {companyData.ce_stock_symbol && (
+                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Globe style={{ width: '20px', height: '20px', color: visableGreen }} />
+                          Stock
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                          <div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Symbol</div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_symbol}</div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Exchange</div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_exchange}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => searchEmployees()}
+                    disabled={isLoadingEmployees}
+                    style={{
+                      padding: '16px 32px', 
+                      backgroundColor: isLoadingEmployees ? '#d1d5db' : '#3b82f6', 
+                      color: 'white',
+                      borderRadius: '12px', 
+                      fontWeight: '600', 
+                      border: 'none', 
+                      cursor: isLoadingEmployees ? 'not-allowed' : 'pointer', 
+                      fontSize: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {isLoadingEmployees ? (
+                      <>
+                        <Loader style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite' }} />
+                        Searching...
+                      </>
+                    ) : (
+                      <>
+                        👥 Find Decision Makers
+                      </>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={sendToLionel}
+                    style={{
+                      padding: '16px 32px', backgroundColor: visableGreen, color: 'white',
+                      borderRadius: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px'
+                    }}
+                  >
+                    📧 Send to Lionel
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(companyData, null, 2));
+                      alert('✓ Data copied!');
+                    }}
+                    style={{
+                      padding: '16px 32px', backgroundColor: 'white', color: '#111827',
+                      borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
+                    }}
+                  >
+                    Copy Data
+                  </button>
+                  
+                  <button
+                    onClick={() => { 
+                      setCompanyData(null); 
+                      setDomain(''); 
+                      setApiErrors([]); 
+                      setEmployees([]); 
+                      setSelectedEmployees([]); 
+                      setRevealedContacts([]);
+                      setEmployeePage(1);
+                    }}
+                    style={{
+                      padding: '16px 32px', backgroundColor: 'white', color: '#6b7280',
+                      borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
+                    }}
+                  >
+                    New Search
+                  </button>
+                </div>
+
+                {/* Employees List */}
+                {(employees.length > 0 || isLoadingEmployees) && (
+                  <div ref={employeesRef} style={{ marginTop: '32px' }}>
+                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                      
+                      {isLoadingEmployees && employees.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+                          <Loader style={{ width: '48px', height: '48px', color: visableGreen, animation: 'spin 1s linear infinite', margin: '0 auto 24px' }} />
+                          <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
+                            🔍 Searching for Decision Makers...
+                          </h3>
+                          <p style={{ color: '#6b7280', fontSize: '16px' }}>
+                            Finding contacts at this company, please wait...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                            <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
+                              👥 Decision Makers Found ({employees.length})
+                            </h3>
+                            <button
+                              onClick={revealSelectedEmployees}
+                              disabled={selectedEmployees.length === 0 || isLoadingEmployees}
+                              style={{
+                                padding: '12px 24px',
+                                backgroundColor: selectedEmployees.length > 0 && !isLoadingEmployees ? visableGreen : '#d1d5db',
+                                color: 'white',
+                                borderRadius: '8px',
+                                fontWeight: '600',
+                                border: 'none',
+                                cursor: selectedEmployees.length > 0 && !isLoadingEmployees ? 'pointer' : 'not-allowed',
+                                fontSize: '14px'
+                              }}
+                            >
+                              {isLoadingEmployees ? '⏳ Revealing...' : `🔓 Reveal Selected (${selectedEmployees.length})`}
+                            </button>
+                          </div>
+
+                          {progress && (
+                            <div style={{
+                              padding: '16px',
+                              backgroundColor: '#eff6ff',
+                              borderRadius: '12px',
+                              marginBottom: '20px',
+                              border: '2px solid #3b82f6'
+                            }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <Loader style={{ width: '24px', height: '24px', color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
+                                <div>
+                                  <div style={{ color: '#1e40af', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
+                                    Processing Contact Reveal
+                                  </div>
+                                  <div style={{ color: '#3b82f6', fontSize: '13px' }}>
+                                    {progress}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
+                            {employees.map((employee) => {
+                              const uniqueKey = employee.uniqueKey;
+                              
+                              return (
+                                <div
+                                  key={uniqueKey}
+                                  onClick={() => toggleEmployeeSelection(uniqueKey)}
+                                  style={{
+                                    padding: '16px',
+                                    backgroundColor: selectedEmployees.includes(uniqueKey) ? '#dcfce7' : '#f9fafb',
+                                    border: `2px solid ${selectedEmployees.includes(uniqueKey) ? visableGreen : '#e5e7eb'}`,
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                  }}
+                                >
+                                  <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedEmployees.includes(uniqueKey)}
+                                      onChange={(e) => {
+                                        e.stopPropagation();
+                                        toggleEmployeeSelection(uniqueKey);
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                      style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer' }}
+                                    />
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#111827', marginBottom: '4px' }}>
+                                        {employee.full_name || employee.name || 'Unknown'}
+                                      </div>
+                                      <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                        {employee.job_title || employee.title || 'No title available'}
+                                      </div>
+                                      {employee.location && (
+                                        <div style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '4px' }}>
+                                          📍 {employee.location}
+                                        </div>
+                                      )}
+                                      {employee.linkedin && (
+                                        <a 
+                                          href={employee.linkedin} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer"
+                                          onClick={(e) => e.stopPropagation()}
+                                          style={{ fontSize: '12px', color: '#3b82f6', textDecoration: 'none' }}
+                                        >
+                                          🔗 LinkedIn
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {hasMoreEmployees && !isLoadingEmployees && (
+                            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                              <button
+                                onClick={loadMoreEmployees}
+                                style={{
+                                  padding: '12px 32px',
+                                  backgroundColor: visableGreen,
+                                  color: 'white',
+                                  borderRadius: '8px',
+                                  fontWeight: '600',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontSize: '14px'
+                                }}
+                              >
+                                Load More Employees
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Revealed Contacts */}
+                {revealedContacts.length > 0 && (
+                  <div id="revealed-contacts" style={{ marginTop: '32px' }}>
+                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                      <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        🎉 Successfully Revealed ({revealedContacts.length})
+                      </h3>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {revealedContacts.map((contact, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              padding: '20px',
+                              backgroundColor: '#f0fdf4',
+                              border: '2px solid #86efac',
+                              borderRadius: '12px'
+                            }}
+                          >
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                              <div>
+                                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#111827', marginBottom: '12px' }}>
+                                  {contact.full_name}
+                                </div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Title:</strong> {contact.title || contact.job_title}
+                                </div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Email:</strong> {contact.revealed_data?.email || 'N/A'}
+                                </div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Phone:</strong> {contact.revealed_data?.mobile_phone || contact.revealed_data?.phone_number || 'N/A'}
+                                </div>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Location:</strong> {contact.location || 'N/A'}
+                                </div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Email Status:</strong> {contact.revealed_data?.email_status || 'N/A'}
+                                </div>
+                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                  <strong>Phone Status:</strong> {contact.revealed_data?.phone_status || 'N/A'}
+                                </div>
+                                {contact.revealed_data?.company_size && (
+                                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                                    <strong>Company Size:</strong> {contact.revealed_data.company_size}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          const csvData = revealedContacts.map(c => ({
+                            Name: c.full_name,
+                            Title: c.title || c.job_title,
+                            Email: c.revealed_data?.email || '',
+                            Phone: c.revealed_data?.mobile_phone || c.revealed_data?.phone_number || '',
+                            Location: c.location || '',
+                            LinkedIn: c.linkedin || '',
+                            EmailStatus: c.revealed_data?.email_status || '',
+                            PhoneStatus: c.revealed_data?.phone_status || '',
+                            CompanySize: c.revealed_data?.company_size || ''
+                          }));
+                          
+                          const csv = [
+                            Object.keys(csvData[0]).join(','),
+                            ...csvData.map(row => Object.values(row).map(v => `"${v}"`).join(','))
+                          ].join('\n');
+                          
+                          const blob = new Blob([csv], { type: 'text/csv' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `revealed_contacts_${Date.now()}.csv`;
+                          a.click();
+                        }}
+                        style={{
+                          marginTop: '16px',
+                          padding: '12px 24px',
+                          backgroundColor: visableGreen,
+                          color: 'white',
+                          borderRadius: '8px',
+                          fontWeight: '600',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '14px'
+                        }}
+                      >
+                        📥 Export to CSV
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+    // Render the app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(ICPChecker));
+  </script>
+</body>
+</html>
