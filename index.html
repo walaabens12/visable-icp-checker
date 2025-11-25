@@ -445,6 +445,13 @@ No estimation needed.
 - European (multiple European countries)
 - International (global/worldwide operations)
 
+⚠️ IMPORTANT: Be CONSERVATIVE - bias toward larger areas. Only mark as "Regional" if there are EXPLICIT indicators like:
+- "local", "city", "canton", "regional", "municipal"
+- Company serves only one city or small geographic area
+- Description mentions specific local area only
+
+DEFAULT to "National" for DACH companies unless clear evidence of broader (European/International) or narrower (Regional) scope.
+
 5. ICP MATCH CRITERIA (ALL must pass - ANY failure = NOT ICP):
 ✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
@@ -667,15 +674,27 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     const finalSupplierType = supplierTypes.join('; ');
 
-    let distArea = 'Regional';
+    let distArea = 'National'; // Changed default from 'Regional' to 'National'
     
-    if (descLower.includes('global') || descLower.includes('worldwide')) {
+    // Be VERY conservative - only mark as Regional if explicitly local/city-level
+    if (descLower.includes('local') || descLower.includes('city') || 
+        descLower.includes('regional') || descLower.includes('canton') ||
+        (descLower.includes('area') && !descLower.includes('international') && !descLower.includes('europe'))) {
+      distArea = 'Regional';
+    } else if (descLower.includes('global') || descLower.includes('worldwide') || 
+               descLower.includes('international') || employeeCount > 100) {
       distArea = 'International';
-    } else if (descLower.includes('europe') || descLower.includes('european')) {
+    } else if (descLower.includes('europe') || descLower.includes('european') || 
+               descLower.includes('eu ') || employeeCount > 50) {
       distArea = 'European';
-    } else if (descLower.includes('national') || employeeCount > 100) {
+    } else if (descLower.includes('national') || descLower.includes('country') || 
+               descLower.includes('nationwide') || descLower.includes('switzerland') || 
+               descLower.includes('germany') || descLower.includes('austria') ||
+               descLower.includes('schweiz') || descLower.includes('deutschland') || 
+               descLower.includes('österreich')) {
       distArea = 'National';
     }
+    // Default stays 'National' if no clear indicators
 
     const reasons = [];
     let isICP = true;
