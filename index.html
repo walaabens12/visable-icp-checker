@@ -1296,6 +1296,43 @@ Reasoning: ${companyData.final_reason}
 
         {/* Search Box */}
         <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginBottom: '32px' }}>
+          
+          {/* Mode Toggle */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: '2px solid #e5e7eb', paddingBottom: '16px' }}>
+            <button
+              onClick={() => { setSearchMode('domain'); setSearchResults([]); setError(''); }}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: searchMode === 'domain' ? visableGreen : 'transparent',
+                color: searchMode === 'domain' ? 'white' : '#6b7280',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              🔍 Domain Search
+            </button>
+            <button
+              onClick={() => { setSearchMode('semantic'); setCompanyData(null); setError(''); }}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: searchMode === 'semantic' ? visableGreen : 'transparent',
+                color: searchMode === 'semantic' ? 'white' : '#6b7280',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              🌍 Semantic Search
+            </button>
+          </div>
+
+          {/* Domain Search Mode */}
+          {searchMode === 'domain' && (
           <div style={{ marginBottom: '24px' }}>
             <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
               Company Domain
@@ -1355,13 +1392,141 @@ Reasoning: ${companyData.final_reason}
               </button>
             </div>
           </div>
+          )}
 
-          {error && (
-            <div style={{
-              padding: '16px',
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '8px',
+          {/* Semantic Search Mode */}
+          {searchMode === 'semantic' && (
+            <div>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                Search Query
+              </label>
+              <div style={{ marginBottom: '16px' }}>
+                <input
+                  type="text"
+                  value={semanticQuery}
+                  onChange={(e) => setSemanticQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSemanticSearch()}
+                  placeholder="e.g., metal manufacturers in Germany with 50-200 employees"
+                  disabled={isSearching}
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '12px',
+                    outline: 'none',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = visableGreen}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              {/* Filters */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                
+                {/* Country Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                    Countries
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[
+                      { code: 'DE', name: '🇩🇪 Germany' },
+                      { code: 'AT', name: '🇦🇹 Austria' },
+                      { code: 'CH', name: '🇨🇭 Switzerland' }
+                    ].map(country => (
+                      <button
+                        key={country.code}
+                        onClick={() => {
+                          setSelectedCountries(prev =>
+                            prev.includes(country.code)
+                              ? prev.filter(c => c !== country.code)
+                              : [...prev, country.code]
+                          );
+                        }}
+                        style={{
+                          padding: '8px 16px',
+                          backgroundColor: selectedCountries.includes(country.code) ? visableGreen : '#f3f4f6',
+                          color: selectedCountries.includes(country.code) ? 'white' : '#374151',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {country.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Size Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                    Company Size
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[
+                      { value: 'FiveToNine', label: '5-9' },
+                      { value: 'TenToNineteen', label: '10-19' },
+                      { value: 'TwentyToFortyNine', label: '20-49' },
+                      { value: 'FiftyToNinetyNine', label: '50-99' },
+                      { value: 'OneHundredToOneNinetyNine', label: '100-199' },
+                      { value: 'TwoHundredToFourNinetyNine', label: '200-499' }
+                    ].map(size => (
+                      <button
+                        key={size.value}
+                        onClick={() => {
+                          setSelectedSizes(prev =>
+                            prev.includes(size.value)
+                              ? prev.filter(s => s !== size.value)
+                              : [...prev, size.value]
+                          );
+                        }}
+                        style={{
+                          padding: '8px 16px',
+                          backgroundColor: selectedSizes.includes(size.value) ? visableGreen : '#f3f4f6',
+                          color: selectedSizes.includes(size.value) ? 'white' : '#374151',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {size.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Search Button */}
+              <button
+                onClick={handleSemanticSearch}
+                disabled={!semanticQuery.trim() || isSearching}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  backgroundColor: (semanticQuery.trim() && !isSearching) ? visableGreen : '#d1d5db',
+                  color: 'white',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  border: 'none',
+                  cursor: (semanticQuery.trim() && !isSearching) ? 'pointer' : 'not-allowed',
+                  fontSize: '16px',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                {isSearching ? 'Searching...' : '🔍 Search Companies'}
+              </button>
+            </div>
+          )}
+
+          {/* Error Display */}
               color: '#991b1b',
               fontSize: '14px',
               display: 'flex',
@@ -1420,6 +1585,60 @@ Reasoning: ${companyData.final_reason}
                 {progress}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Search Results Table */}
+        {searchResults.length > 0 && searchMode === 'semantic' && (
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#111827', marginBottom: '20px' }}>
+              Found {searchResults.length} companies
+            </h2>
+            
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Company</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Domain</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Industry</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Country</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b7280' }}>Employees</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {searchResults.map((company, idx) => (
+                    <tr 
+                      key={idx}
+                      onClick={() => selectCompanyFromSearch(company)}
+                      style={{ 
+                        borderBottom: '1px solid #f3f4f6',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    >
+                      <td style={{ padding: '16px', fontSize: '14px', color: '#111827', fontWeight: '500' }}>
+                        {company.name || 'Unknown'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
+                        {company.domain || '-'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
+                        {company.industry || '-'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
+                        {company.location?.country?.name || '-'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '14px', color: '#6b7280' }}>
+                        {company.employees || '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
@@ -2067,9 +2286,8 @@ Reasoning: ${companyData.final_reason}
   );
 }
 
-    // Render the app
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(ICPChecker));
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(ICPChecker));
   </script>
 </body>
 </html>
