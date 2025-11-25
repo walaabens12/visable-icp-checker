@@ -420,7 +420,7 @@ ${!hasEmployeeData ? `
 - Office locations mentioned
 - Technology stack complexity
 
-⚠️ IMPORTANT ESTIMATION GUIDELINES - BE CONSERVATIVE (bias toward SMALLER sizes):
+⚠️ IMPORTANT ESTIMATION GUIDELINES - BE CONSERVATIVE (bias toward medium sizes):
 - "Small startup" / "small team" / "boutique" / "family business" → 5-9
 - "Growing company" / "established local" / "supplier" → 10-19
 - "Established manufacturer" / "regional distributor" → 20-49
@@ -445,12 +445,19 @@ No estimation needed.
 - European (multiple European countries)
 - International (global/worldwide operations)
 
-5. ICP MATCH CRITERIA (ALL must pass):
+5. ICP MATCH CRITERIA (ALL must pass - ANY failure = NOT ICP):
 ✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
 ✓ Industry: MUST match at least one from the list above (not "Other:")
-✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
-✓ Supplier Type: All types accepted
+✓ Distribution: MUST be International, European, or National (NOT Regional - Regional = FAIL)
+✓ Supplier Type: CANNOT be "Service Provider" ONLY - must include Manufacturer, Distributor, Wholesaler, or Customer Specific Manufacturing
+
+CRITICAL BLOCKERS (automatic ICP = false):
+- Regional distribution → NOT ICP
+- Service Provider only (without any manufacturing/distribution) → NOT ICP
+- Employee size 1-4 or 500+ → NOT ICP
+- Country outside DACH → NOT ICP
+- Industry "Other:" → NOT ICP
 
 RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 {
@@ -702,6 +709,22 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       reasons.push(`✗ Industry not in ICP list`);
     } else {
       reasons.push(`✓ Industry match`);
+    }
+    
+    // Check distribution area - Regional is NOT ICP
+    if (distArea === 'Regional') {
+      isICP = false;
+      reasons.push(`✗ Regional distribution only`);
+    } else {
+      reasons.push(`✓ Distribution: ${distArea}`);
+    }
+    
+    // Check supplier type - Service Provider ONLY is NOT ICP
+    if (finalSupplierType === 'Service Provider') {
+      isICP = false;
+      reasons.push(`✗ Service Provider only (no manufacturing/distribution)`);
+    } else {
+      reasons.push(`✓ Supplier type acceptable`);
     }
     
     return {
@@ -1175,6 +1198,12 @@ Reasoning: ${companyData.final_reason}
     // Check if ONLY Service Provider (hard blocker)
     if (supplierType === 'Service Provider' && !supplierType.includes(';')) {
       return { color: '#ef4444', text: 'ICP Blocker: Service Provider Only', icon: 'x' };
+    }
+    
+    // Check if Regional distribution (hard blocker)
+    const distribution = companyData.final_distribution_area || '';
+    if (distribution === 'Regional') {
+      return { color: '#ef4444', text: 'ICP Blocker: Regional Distribution Only', icon: 'x' };
     }
     
     // Soft blocker (ORANGE) - Industry is the only issue
