@@ -447,11 +447,11 @@ No estimation needed.
 - International (global/worldwide operations)
 
 5. ICP MATCH CRITERIA (ALL must pass):
-✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
 ✓ Industry: MUST match at least one from the list above (not "Other:")
 ✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
 ✓ Supplier Type: All types accepted
+Note: Country is NOT a blocker - all countries accepted
 
 RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 {
@@ -793,14 +793,13 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         
         if (industryKeywordMap[icpInd]) {
           for (const keyword of industryKeywordMap[icpInd]) {
-            // Extra check: don't match "industrial" if it's part of "industrial marketplace"
-            if (keyword === 'industrial' || keyword === 'industrie') {
-              if (keywordsText.includes('industrial marketplace') || 
-                  keywordsText.includes('industrial platform') ||
-                  keywordsText.includes('industrie marktplatz')) {
-                console.log(`⚠️ Skipping "${keyword}" - detected in service context`);
-                continue;
-              }
+            // Extra check: don't match "industrial" if it's part of "industrial marketplace/platform"
+            if ((keyword === 'industrial' || keyword === 'industrie') && 
+                (keywordsText.includes('industrial marketplace') || 
+                 keywordsText.includes('industrial platform') ||
+                 keywordsText.includes('industrie marktplatz'))) {
+              console.log(`⚠️ Skipping "${keyword}" - detected in service context`);
+              continue; // Skip this keyword entirely
             }
             
             if (keywordsText.includes(keyword)) {
@@ -886,18 +885,8 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const reasons = [];
     let isICP = true;
 
-    const countryLower = country.toLowerCase();
-    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
-                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
-                   countryLower.includes('österreich') || countryLower.includes('schweiz');
+    // Country check removed - accept all countries
     
-    if (!isDACH && country) {
-      isICP = false;
-      reasons.push(`✗ Country not DACH (${country})`);
-    } else if (isDACH) {
-      reasons.push(`✓ DACH region`);
-    }
-
     const actualSizeCategory = sizeCategory.replace(' (estimated)', '');
     const icpSizes = ['5-9', '10-19', '20-49', '50-99', '100-199', '200-499'];
     
@@ -1487,17 +1476,9 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const industry = companyData.final_industry || '';
     const employees = companyData.final_employees || '';
     const supplierType = companyData.final_supplier_type || '';
-    const country = companyData.ce_country_name || companyData.wiza_company_country || '';
     
     // Hard blockers (RED)
-    const countryLower = country.toLowerCase();
-    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
-                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
-                   countryLower.includes('österreich') || countryLower.includes('schweiz');
-    
-    if (!isDACH && country) {
-      return { color: '#ef4444', text: 'ICP Blocker: Country', icon: 'x' };
-    }
+    // Country check removed - accept all countries
     
     // Check employee size - hard blocker if 1-4 or 500+
     const employeeRange = employees.replace(' (estimated)', '');
@@ -1609,34 +1590,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
                 {isLoading ? 'Checking...' : 'Check ICP'}
               </button>
             </div>
-          </div>
-
-          {/* Proxy Configuration */}
-          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#dcfce7', border: '2px solid #22c55e', borderRadius: '8px' }}>
-            <div style={{ fontSize: '14px', fontWeight: '600', color: '#166534', marginBottom: '8px' }}>
-              ✅ Proxy Running on Render
-            </div>
-            <div style={{ fontSize: '13px', color: '#15803d', marginBottom: '8px' }}>
-              Using cloud proxy: <code style={{ backgroundColor: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>wiza-proxy.onrender.com</code>
-            </div>
-            <div style={{ fontSize: '12px', color: '#15803d', marginBottom: '8px' }}>
-              No local setup needed! Change URL below if needed:
-            </div>
-            <input 
-              type="text" 
-              value={proxyUrl} 
-              onChange={(e) => setProxyUrl(e.target.value)}
-              placeholder="https://wiza-proxy.onrender.com"
-              style={{ 
-                width: '100%', 
-                padding: '8px 12px', 
-                borderRadius: '6px', 
-                border: '1px solid #22c55e',
-                fontSize: '14px',
-                fontFamily: 'monospace',
-                boxSizing: 'border-box'
-              }}
-            />
           </div>
 
           {error && (
