@@ -447,11 +447,11 @@ No estimation needed.
 - International (global/worldwide operations)
 
 5. ICP MATCH CRITERIA (ALL must pass):
+✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
 ✓ Industry: MUST match at least one from the list above (not "Other:")
 ✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
 ✓ Supplier Type: All types accepted
-Note: Country is NOT a blocker - all countries accepted
 
 RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 {
@@ -886,8 +886,18 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const reasons = [];
     let isICP = true;
 
-    // Country check removed - accept all countries
+    const countryLower = country.toLowerCase();
+    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
+                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
+                   countryLower.includes('österreich') || countryLower.includes('schweiz');
     
+    if (!isDACH && country) {
+      isICP = false;
+      reasons.push(`✗ Country not DACH (${country})`);
+    } else if (isDACH) {
+      reasons.push(`✓ DACH region`);
+    }
+
     const actualSizeCategory = sizeCategory.replace(' (estimated)', '');
     const icpSizes = ['5-9', '10-19', '20-49', '50-99', '100-199', '200-499'];
     
@@ -1477,9 +1487,17 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const industry = companyData.final_industry || '';
     const employees = companyData.final_employees || '';
     const supplierType = companyData.final_supplier_type || '';
+    const country = companyData.ce_country_name || companyData.wiza_company_country || '';
     
     // Hard blockers (RED)
-    // Country check removed - accept all countries
+    const countryLower = country.toLowerCase();
+    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
+                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
+                   countryLower.includes('österreich') || countryLower.includes('schweiz');
+    
+    if (!isDACH && country) {
+      return { color: '#ef4444', text: 'ICP Blocker: Country', icon: 'x' };
+    }
     
     // Check employee size - hard blocker if 1-4 or 500+
     const employeeRange = employees.replace(' (estimated)', '');
