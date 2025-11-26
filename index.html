@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visable ICP Checker</title>
+  <title>Visable ICP Checker - CORS FIXED ✅</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -56,6 +56,7 @@ function ICPChecker() {
   const [revealedContacts, setRevealedContacts] = useState([]);
   const [employeePage, setEmployeePage] = useState(1);
   const [hasMoreEmployees, setHasMoreEmployees] = useState(false);
+  const [proxyUrl, setProxyUrl] = useState('https://wiza-proxy.onrender.com');
   
   // Ref for auto-scrolling
   const employeesRef = React.useRef(null);
@@ -446,11 +447,11 @@ No estimation needed.
 - International (global/worldwide operations)
 
 5. ICP MATCH CRITERIA (ALL must pass):
-✓ Country: MUST be Germany, Austria, or Switzerland
 ✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
 ✓ Industry: MUST match at least one from the list above (not "Other:")
 ✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
 ✓ Supplier Type: All types accepted
+Note: Country is NOT a blocker - all countries accepted
 
 RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 {
@@ -468,28 +469,15 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
       }
 
-      console.log('🤖 Calling GPT-4 for intelligent classification...');
+      console.log('🤖 Calling GPT-4 via proxy for intelligent classification...');
       
-      const gptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      const gptResponse = await fetch(`${proxyUrl}/api/openai/classify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert B2B industry classifier. Respond ONLY with valid JSON, no markdown formatting, no backticks, no extra text. When employee data is missing, you MUST estimate based on available context and provide only the range (not exact numbers).'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.2,
-          max_tokens: 500
+          prompt: prompt
         })
       });
 
@@ -517,10 +505,25 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
   };
 
   const fallbackClassification = (ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData) => {
-    const descLower = description.toLowerCase();
-    const categories = (ceData?.categories || []).join('; ');
-    const keywords = (ceData?.keywords || []).join('; ');
+    console.log('🔄 Using fallback classification with priority order: Industries → NAICS → Keywords → Description');
     
+    const descLower = description.toLowerCase();
+    
+    // Get all available data sources
+    const ceIndustries = ceData?.industries || [];  // CompanyEnrich industries array
+    const ceNaics = ceData?.naics || [];  // CompanyEnrich NAICS codes
+    const ceKeywords = ceData?.keywords || [];  // CompanyEnrich keywords
+    const categories = ceData?.categories || [];
+    
+    console.log('📊 Available data sources:', {
+      industries: ceIndustries.length,
+      naics: ceNaics.length,
+      keywords: ceKeywords.length,
+      categories: categories.length,
+      description: description ? 'yes' : 'no'
+    });
+    
+    // Employee size estimation
     if (!hasEmployeeData || sizeCategory === 'Unknown') {
       console.log('⚠️ No employee data, estimating from description...');
       
@@ -571,67 +574,274 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       sizeCategory = estimatedSize;
     }
     
+    // INDUSTRY MATCHING - Priority Order
     const matchedIndustries = [];
-    const searchText = `${industry} ${description} ${categories} ${keywords}`.toLowerCase();
+    let matchSource = '';
     
-    console.log('🔍 Searching in text:', searchText.substring(0, 200));
-    
+    // Enhanced keyword mapping for better matching
     const industryKeywordMap = {
       'Glass and ceramic products': ['glass', 'glas', 'ceramic', 'keramik', 'schauglas', 'sichtglas', 'glasprodukt', 'glaswaren'],
-      'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium'],
+      'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium', 'iron', 'eisen'],
       'Valve technology': ['valve', 'ventil', 'armaturen', 'fitting', 'fittings'],
-      'Pipe and hose technology': ['pipe', 'rohr', 'hose', 'schlauch', 'rohrleitung'],
-      'Electrical engineering': ['electrical', 'elektro', 'electric', 'electronics'],
+      'Pipe and hose technology': ['pipe', 'rohr', 'hose', 'schlauch', 'rohrleitung', 'tubing'],
+      'Electrical engineering': ['electrical', 'elektro', 'electric', 'electronics', 'elektronik'],
       'Control technology': ['control', 'steuerung', 'automation', 'regelung'],
       'Industrial supplies': ['industrial', 'industrie', 'supplies', 'zubehör', 'industrial supplies'],
-      'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge'],
+      'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge', 'sensor'],
       'Process technology': ['process', 'prozess'],
-      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering'],
-      'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications'],
-      'Wood and wood products': ['wood', 'holz', 'timber'],
+      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering', 'apparatus'],
+      'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications', 'logistics'],
+      'Wood and wood products': ['wood', 'holz', 'timber', 'lumber'],
       'Plastics and plastic products': ['plastic', 'kunststoff', 'polymer'],
       'Printing and paper': ['printing', 'druck', 'paper', 'papier'],
       'Food technology': ['food', 'lebensmittel', 'beverage', 'getränke'],
       'Packaging machinery': ['packaging', 'verpackung'],
       'Cleaning supplies': ['cleaning', 'reinigung'],
-      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung']
+      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung'],
+      'Machine tools and equipment': ['machine tool', 'cnc', 'lathe', 'milling'],
+      'Construction machinery and equipment': ['construction', 'bau', 'excavator', 'crane'],
+      'Robotics, process and automation technology': ['robot', 'robotics', 'automation', 'automatisierung']
     };
     
-    const priorityIndustries = ['Glass and ceramic products', 'Valve technology', 'Metal and metal products'];
+    // NAICS to ICP Industry mapping
+    const naicsToICP = {
+      '3272': 'Glass and ceramic products',
+      '327': 'Glass and ceramic products',
+      '3332': 'Valve technology',
+      '332': 'Metal and metal products',
+      '3331': 'Metal and metal products',
+      '3261': 'Plastics and plastic products',
+      '3259': 'Printing and paper',
+      '3221': 'Printing and paper',
+      '3339': 'Measuring and testing technology',
+      '3345': 'Measuring and testing technology',
+      '3353': 'Electrical engineering',
+      '335': 'Electrical engineering',
+      '3335': 'Control technology',
+      '3336': 'Drive technology',
+      '3333': 'Construction machinery and equipment',
+      '3321': 'Valve technology',
+      '3334': 'Heating and cooling equipment',
+      '311': 'Food technology',
+      '3115': 'Food and beverage',
+      '3116': 'Food and beverage',
+      '3253': 'Cleaning supplies',
+      '3256': 'Textile production',
+      '321': 'Wood and wood products'
+    };
     
-    for (const ind of priorityIndustries) {
-      if (matchedIndustries.length >= 5) break;
-      if (!icpIndustries.includes(ind)) continue;
+    // PRIORITY 1: Match using Industries from CompanyEnrich
+    if (ceIndustries.length > 0) {
+      console.log('🎯 PRIORITY 1: Checking Industries from CompanyEnrich:', ceIndustries);
       
-      if (industryKeywordMap[ind]) {
-        for (const keyword of industryKeywordMap[ind]) {
-          if (searchText.includes(keyword)) {
-            matchedIndustries.push(ind);
-            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
+      // Check if this is a service/platform company based on industries
+      const allIndustriesText = ceIndustries.join(' ').toLowerCase();
+      const isServiceBased = allIndustriesText.includes('services') || 
+                            allIndustriesText.includes('advertising') ||
+                            allIndustriesText.includes('marketing') ||
+                            allIndustriesText.includes('software') ||
+                            allIndustriesText.includes('data collection') ||
+                            allIndustriesText.includes('internet portal');
+      
+      if (isServiceBased) {
+        console.log('⚠️ Service/Platform company detected via Industries - limiting product industry matches');
+      }
+      
+      for (const ceIndustry of ceIndustries) {
+        if (matchedIndustries.length >= 5) break;
+        
+        const ceIndLower = ceIndustry.toLowerCase();
+        
+        // Direct match
+        for (const icpInd of icpIndustries) {
+          if (matchedIndustries.includes(icpInd)) continue;
+          
+          const icpLower = icpInd.toLowerCase();
+          
+          // Skip industrial product categories for service companies
+          if (isServiceBased) {
+            const serviceExclusions = [
+              'Industrial supplies',
+              'Machine parts',
+              'Metal and metal products',
+              'Electrical engineering',
+              'Mechanical engineering, plant construction and apparatus construction',
+              'Construction machinery and equipment',
+              'Machine tools and equipment'
+            ];
+            
+            if (serviceExclusions.includes(icpInd)) {
+              continue;
+            }
+          }
+          
+          // Check if ICP industry is contained in CE industry or vice versa
+          if (ceIndLower.includes(icpLower) || icpLower.includes(ceIndLower)) {
+            matchedIndustries.push(icpInd);
+            matchSource = 'Industries';
+            console.log(`✅ Matched "${icpInd}" via Industries: "${ceIndustry}"`);
             break;
+          }
+          
+          // Check via keyword map
+          if (industryKeywordMap[icpInd]) {
+            for (const keyword of industryKeywordMap[icpInd]) {
+              // Skip "industrial" keyword for service companies
+              if (isServiceBased && (keyword === 'industrial' || keyword === 'industrie')) {
+                continue;
+              }
+              
+              if (ceIndLower.includes(keyword)) {
+                matchedIndustries.push(icpInd);
+                matchSource = 'Industries';
+                console.log(`✅ Matched "${icpInd}" via Industries keyword: "${keyword}" in "${ceIndustry}"`);
+                break;
+              }
+            }
+            if (matchedIndustries.includes(icpInd)) break;
           }
         }
       }
     }
     
-    for (const ind of icpIndustries) {
-      if (matchedIndustries.length >= 5) break;
-      if (matchedIndustries.includes(ind)) continue;
+    // PRIORITY 2: Match using NAICS codes from CompanyEnrich
+    if (matchedIndustries.length < 5 && ceNaics.length > 0) {
+      console.log('🎯 PRIORITY 2: Checking NAICS codes from CompanyEnrich:', ceNaics);
       
-      const indLower = ind.toLowerCase();
-      
-      if (industryKeywordMap[ind]) {
-        for (const keyword of industryKeywordMap[ind]) {
-          if (searchText.includes(keyword)) {
-            matchedIndustries.push(ind);
-            console.log(`✅ Matched "${ind}" via keyword: "${keyword}"`);
-            break;
+      for (const naicsObj of ceNaics) {
+        if (matchedIndustries.length >= 5) break;
+        
+        const naicsCode = naicsObj.code || naicsObj;
+        const naicsDesc = naicsObj.description || '';
+        
+        console.log(`  Checking NAICS: ${naicsCode} - ${naicsDesc}`);
+        
+        // Check NAICS code mapping
+        const naicsPrefix = naicsCode.substring(0, 4);
+        const naicsPrefix3 = naicsCode.substring(0, 3);
+        
+        if (naicsToICP[naicsPrefix] && !matchedIndustries.includes(naicsToICP[naicsPrefix])) {
+          matchedIndustries.push(naicsToICP[naicsPrefix]);
+          matchSource = matchSource || 'NAICS';
+          console.log(`✅ Matched "${naicsToICP[naicsPrefix]}" via NAICS code: ${naicsCode}`);
+        } else if (naicsToICP[naicsPrefix3] && !matchedIndustries.includes(naicsToICP[naicsPrefix3])) {
+          matchedIndustries.push(naicsToICP[naicsPrefix3]);
+          matchSource = matchSource || 'NAICS';
+          console.log(`✅ Matched "${naicsToICP[naicsPrefix3]}" via NAICS code: ${naicsCode}`);
+        }
+        
+        // Also check NAICS description
+        if (naicsDesc) {
+          const naicsDescLower = naicsDesc.toLowerCase();
+          
+          for (const icpInd of icpIndustries) {
+            if (matchedIndustries.length >= 5) break;
+            if (matchedIndustries.includes(icpInd)) continue;
+            
+            if (industryKeywordMap[icpInd]) {
+              for (const keyword of industryKeywordMap[icpInd]) {
+                if (naicsDescLower.includes(keyword)) {
+                  matchedIndustries.push(icpInd);
+                  matchSource = matchSource || 'NAICS';
+                  console.log(`✅ Matched "${icpInd}" via NAICS description: "${keyword}" in "${naicsDesc}"`);
+                  break;
+                }
+              }
+              if (matchedIndustries.includes(icpInd)) break;
+            }
           }
         }
-      } else {
-        const mainWords = indLower.split(',')[0].trim().split(' and ')[0].trim();
-        if (searchText.includes(indLower) || searchText.includes(mainWords)) {
-          matchedIndustries.push(ind);
+      }
+    }
+    
+    // PRIORITY 3: Match using Keywords from CompanyEnrich
+    if (matchedIndustries.length < 5 && ceKeywords.length > 0) {
+      console.log('🎯 PRIORITY 3: Checking Keywords from CompanyEnrich:', ceKeywords);
+      
+      const keywordsText = ceKeywords.join(' ').toLowerCase();
+      
+      // Exclusion patterns - if these are present, skip certain industries
+      const isMarketplace = keywordsText.includes('marketplace') || keywordsText.includes('platform');
+      const isAdvertising = keywordsText.includes('advertising') || keywordsText.includes('marketing') || keywordsText.includes('lead generation');
+      const isSoftware = keywordsText.includes('software') || keywordsText.includes('saas') || keywordsText.includes('digital');
+      
+      // Service provider indicators - should NOT match industrial categories
+      const isServiceProvider = isMarketplace || isAdvertising || isSoftware;
+      
+      if (isServiceProvider) {
+        console.log('⚠️ Detected service provider indicators - will skip industrial product matches');
+      }
+      
+      for (const icpInd of icpIndustries) {
+        if (matchedIndustries.length >= 5) break;
+        if (matchedIndustries.includes(icpInd)) continue;
+        
+        // Skip industrial product categories for service providers
+        if (isServiceProvider) {
+          const serviceExclusions = [
+            'Industrial supplies',
+            'Machine parts',
+            'Metal and metal products',
+            'Electrical engineering',
+            'Mechanical engineering, plant construction and apparatus construction'
+          ];
+          
+          if (serviceExclusions.includes(icpInd)) {
+            continue; // Skip these for service companies
+          }
+        }
+        
+        if (industryKeywordMap[icpInd]) {
+          for (const keyword of industryKeywordMap[icpInd]) {
+            // Extra check: don't match "industrial" if it's part of "industrial marketplace"
+            if (keyword === 'industrial' || keyword === 'industrie') {
+              if (keywordsText.includes('industrial marketplace') || 
+                  keywordsText.includes('industrial platform') ||
+                  keywordsText.includes('industrie marktplatz')) {
+                console.log(`⚠️ Skipping "${keyword}" - detected in service context`);
+                continue;
+              }
+            }
+            
+            if (keywordsText.includes(keyword)) {
+              matchedIndustries.push(icpInd);
+              matchSource = matchSource || 'Keywords';
+              console.log(`✅ Matched "${icpInd}" via Keywords: "${keyword}"`);
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    // PRIORITY 4: Match using Description (last resort)
+    if (matchedIndustries.length < 5 && description) {
+      console.log('🎯 PRIORITY 4: Checking Description (last resort)');
+      
+      for (const icpInd of icpIndustries) {
+        if (matchedIndustries.length >= 5) break;
+        if (matchedIndustries.includes(icpInd)) continue;
+        
+        const icpLower = icpInd.toLowerCase();
+        
+        // Direct match in description
+        if (descLower.includes(icpLower)) {
+          matchedIndustries.push(icpInd);
+          matchSource = matchSource || 'Description';
+          console.log(`✅ Matched "${icpInd}" via Description: direct match`);
+          continue;
+        }
+        
+        // Keyword match in description
+        if (industryKeywordMap[icpInd]) {
+          for (const keyword of industryKeywordMap[icpInd]) {
+            if (descLower.includes(keyword)) {
+              matchedIndustries.push(icpInd);
+              matchSource = matchSource || 'Description';
+              console.log(`✅ Matched "${icpInd}" via Description keyword: "${keyword}"`);
+              break;
+            }
+          }
         }
       }
     }
@@ -639,7 +849,10 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const finalIndustry = matchedIndustries.length > 0 
       ? matchedIndustries.join('; ')
       : (industry ? `Other: ${industry}` : 'Unknown');
+    
+    console.log(`🎯 Final industry classification: ${finalIndustry} (Source: ${matchSource || 'None'})`);
 
+    // Supplier Type Classification
     const supplierTypes = [];
     
     if (descLower.includes('manufactur') || descLower.includes('production')) {
@@ -673,18 +886,8 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     const reasons = [];
     let isICP = true;
 
-    const countryLower = country.toLowerCase();
-    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
-                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
-                   countryLower.includes('österreich') || countryLower.includes('schweiz');
+    // Country check removed - accept all countries
     
-    if (!isDACH && country) {
-      isICP = false;
-      reasons.push(`✗ Country not DACH (${country})`);
-    } else if (isDACH) {
-      reasons.push(`✓ DACH region`);
-    }
-
     const actualSizeCategory = sizeCategory.replace(' (estimated)', '');
     const icpSizes = ['5-9', '10-19', '20-49', '50-99', '100-199', '200-499'];
     
@@ -1114,29 +1317,149 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
   };
 
   const sendToLionel = () => {
-    if (!companyData) return;
+    if (!companyData) {
+      alert('⚠️ No company data available. Please search for a company first.');
+      return;
+    }
     
-    const emailData = {
-      to: 'lionel@visable.com',
-      subject: `ICP Check: ${companyData.ce_name || companyData.wiza_company_name || domain}`,
-      body: `Company: ${companyData.ce_name || companyData.wiza_company_name}
-Domain: ${companyData.ce_domain}
-ICP Match: ${companyData.icp_match ? 'YES ✓' : 'NO ✗'}
-
-Industry: ${companyData.final_industry}
-Supplier Type: ${companyData.final_supplier_type}
-Distribution: ${companyData.final_distribution_area}
-Employees: ${companyData.final_employees}
-
-Country: ${companyData.ce_country_name || companyData.wiza_company_country}
-Website: ${companyData.ce_website}
-
-Reasoning: ${companyData.final_reason}
-      `
+    // Helper function to split phone into country code and national number
+    const splitPhone = (phoneNumber) => {
+      if (!phoneNumber) return { countryCode: '', nationalNumber: '' };
+      
+      const cleaned = phoneNumber.replace(/\s+/g, '').replace(/[^\d+]/g, '');
+      
+      // Common country code patterns
+      const patterns = [
+        { code: '+49', length: 2 },   // Germany
+        { code: '+43', length: 2 },   // Austria
+        { code: '+41', length: 2 },   // Switzerland
+        { code: '+44', length: 2 },   // UK
+        { code: '+33', length: 2 },   // France
+        { code: '+1', length: 1 },    // US/Canada
+        { code: '+39', length: 2 },   // Italy
+        { code: '+34', length: 2 },   // Spain
+      ];
+      
+      for (const pattern of patterns) {
+        if (cleaned.startsWith(pattern.code)) {
+          return {
+            countryCode: pattern.code,
+            nationalNumber: cleaned.substring(pattern.code.length)
+          };
+        }
+      }
+      
+      // Default: assume first 2-3 chars are country code
+      if (cleaned.startsWith('+')) {
+        const countryCode = cleaned.substring(0, 3);
+        const nationalNumber = cleaned.substring(3);
+        return { countryCode, nationalNumber };
+      }
+      
+      return { countryCode: '', nationalNumber: cleaned };
     };
     
-    const mailtoLink = `mailto:${emailData.to}?subject=${encodeURIComponent(emailData.subject)}&body=${encodeURIComponent(emailData.body)}`;
-    window.location.href = mailtoLink;
+    // Split company phone
+    const companyPhone = splitPhone(companyData.ce_phone);
+    
+    // Prepare CSV data for all revealed contacts
+    const csvRows = [];
+    
+    // CSV Headers
+    const headers = [
+      'Account Name',
+      'Distribution Area',
+      'Assigned User Name',
+      'Lead Source',
+      'Tags',
+      'Primary Address Country',
+      'Primary Address City',
+      'Primary Address Postcode',
+      'Office Phone (Company) Country Code',
+      'Office Phone (Company) National Phone Number',
+      'Office Phone (Contact) Country Code',
+      'Office Phone (Contact) National Phone Number',
+      'First Name',
+      'Last Name',
+      'Website',
+      'Email Address'
+    ];
+    
+    csvRows.push(headers.join(','));
+    
+    // If we have revealed contacts, create a row for each
+    if (revealedContacts.length > 0) {
+      revealedContacts.forEach(contact => {
+        const contactPhone = splitPhone(contact.revealed_data?.mobile_phone || contact.revealed_data?.phone_number);
+        
+        // Split name into first and last
+        const fullName = contact.full_name || '';
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        const row = [
+          `"${companyData.ce_name || companyData.wiza_company_name || ''}"`,
+          `"${companyData.final_distribution_area || ''}"`,
+          '"No Field Sales"',
+          '"Self Research"',
+          '"User_Interface"',
+          `"${companyData.ce_country_name || companyData.wiza_company_country || ''}"`,
+          `"${companyData.ce_city_name || ''}"`,
+          `"${companyData.ce_postal_code || ''}"`,
+          `"${companyPhone.countryCode}"`,
+          `"${companyPhone.nationalNumber}"`,
+          `"${contactPhone.countryCode}"`,
+          `"${contactPhone.nationalNumber}"`,
+          `"${firstName}"`,
+          `"${lastName}"`,
+          `"${companyData.ce_website || ''}"`,
+          `"${contact.revealed_data?.email || ''}"`
+        ];
+        
+        csvRows.push(row.join(','));
+      });
+    } else {
+      // If no revealed contacts, create one row with just company data
+      const row = [
+        `"${companyData.ce_name || companyData.wiza_company_name || ''}"`,
+        `"${companyData.final_distribution_area || ''}"`,
+        '"No Field Sales"',
+        '"Self Research"',
+        '"User_Interface"',
+        `"${companyData.ce_country_name || companyData.wiza_company_country || ''}"`,
+        `"${companyData.ce_city_name || ''}"`,
+        `"${companyData.ce_postal_code || ''}"`,
+        `"${companyPhone.countryCode}"`,
+        `"${companyPhone.nationalNumber}"`,
+        '""',
+        '""',
+        '""',
+        '""',
+        `"${companyData.ce_website || ''}"`,
+        '""'
+      ];
+      
+      csvRows.push(row.join(','));
+    }
+    
+    // Create CSV content
+    const csvContent = csvRows.join('\n');
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `lionel_leads_${companyData.ce_domain || domain}_${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alert(`✅ CSV downloaded successfully!\n\n${revealedContacts.length > 0 ? `${revealedContacts.length} contact(s) included` : 'Company data only (no contacts revealed yet)'}`);
   };
 
   // Determine status color and blocker type
@@ -1154,17 +1477,9 @@ Reasoning: ${companyData.final_reason}
     const industry = companyData.final_industry || '';
     const employees = companyData.final_employees || '';
     const supplierType = companyData.final_supplier_type || '';
-    const country = companyData.ce_country_name || companyData.wiza_company_country || '';
     
     // Hard blockers (RED)
-    const countryLower = country.toLowerCase();
-    const isDACH = countryLower.includes('germany') || countryLower.includes('austria') || 
-                   countryLower.includes('switzerland') || countryLower.includes('deutschland') ||
-                   countryLower.includes('österreich') || countryLower.includes('schweiz');
-    
-    if (!isDACH && country) {
-      return { color: '#ef4444', text: 'ICP Blocker: Country', icon: 'x' };
-    }
+    // Country check removed - accept all countries
     
     // Check employee size - hard blocker if 1-4 or 500+
     const employeeRange = employees.replace(' (estimated)', '');
@@ -1276,6 +1591,34 @@ Reasoning: ${companyData.final_reason}
                 {isLoading ? 'Checking...' : 'Check ICP'}
               </button>
             </div>
+          </div>
+
+          {/* Proxy Configuration */}
+          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#dcfce7', border: '2px solid #22c55e', borderRadius: '8px' }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: '#166534', marginBottom: '8px' }}>
+              ✅ Proxy Running on Render
+            </div>
+            <div style={{ fontSize: '13px', color: '#15803d', marginBottom: '8px' }}>
+              Using cloud proxy: <code style={{ backgroundColor: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>wiza-proxy.onrender.com</code>
+            </div>
+            <div style={{ fontSize: '12px', color: '#15803d', marginBottom: '8px' }}>
+              No local setup needed! Change URL below if needed:
+            </div>
+            <input 
+              type="text" 
+              value={proxyUrl} 
+              onChange={(e) => setProxyUrl(e.target.value)}
+              placeholder="https://wiza-proxy.onrender.com"
+              style={{ 
+                width: '100%', 
+                padding: '8px 12px', 
+                borderRadius: '6px', 
+                border: '1px solid #22c55e',
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                boxSizing: 'border-box'
+              }}
+            />
           </div>
 
           {error && (
@@ -1703,7 +2046,7 @@ Reasoning: ${companyData.final_reason}
                       borderRadius: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px'
                     }}
                   >
-                    📧 Send to Lionel
+                    📥 Download CSV for Lionel
                   </button>
                   
                   <button
