@@ -826,29 +826,29 @@ function CompanyEnrichment() {
                   </div>
                 </div>
 
-                {/* Industries */}
+                {/* Industry Info */}
                 {(companyData.ce_industry || companyData.ce_industries || companyData.wiza_company_industry) && (
                   <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
-                      Industries
+                      Industry Information
                     </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {companyData.ce_industry && (
-                        <div style={{ padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '4px', fontWeight: '600' }}>Primary Industry</div>
-                          <div style={{ fontSize: '14px', color: '#166534' }}>{companyData.ce_industry}</div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', fontWeight: '600' }}>CompanyEnrich Industry</div>
+                          <div style={{ fontSize: '15px', color: '#111827', fontWeight: '500' }}>{companyData.ce_industry}</div>
                         </div>
                       )}
                       {companyData.ce_industries && (
-                        <div style={{ padding: '12px', backgroundColor: '#eff6ff', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '12px', color: '#1e40af', marginBottom: '4px', fontWeight: '600' }}>All Industries</div>
-                          <div style={{ fontSize: '14px', color: '#1e40af' }}>{companyData.ce_industries}</div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', fontWeight: '600' }}>All Industries (CompanyEnrich)</div>
+                          <div style={{ fontSize: '14px', color: '#374151', lineHeight: '1.6' }}>{companyData.ce_industries}</div>
                         </div>
                       )}
                       {companyData.wiza_company_industry && (
-                        <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px' }}>
-                          <div style={{ fontSize: '12px', color: '#92400e', marginBottom: '4px', fontWeight: '600' }}>Wiza Industry</div>
-                          <div style={{ fontSize: '14px', color: '#92400e' }}>{companyData.wiza_company_industry}</div>
+                        <div>
+                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px', fontWeight: '600' }}>Wiza Industry</div>
+                          <div style={{ fontSize: '15px', color: '#111827', fontWeight: '500' }}>{companyData.wiza_company_industry}</div>
                         </div>
                       )}
                     </div>
