@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visable ICP Checker - CORS FIXED ✅</title>
+  <title>Visable Company Enrichment Tool</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -24,7 +24,7 @@
   <script type="text/babel">
 const { useState } = React;
 
-// Lucide Icons (using the global lucide object)
+// Lucide Icons
 const Search = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "11", cy: "11", r: "8" }), React.createElement('path', { d: "m21 21-4.3-4.3" }));
 const Users = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" }), React.createElement('circle', { cx: "9", cy: "7", r: "4" }), React.createElement('path', { d: "M22 21v-2a4 4 0 0 0-3-3.87" }), React.createElement('path', { d: "M16 3.13a4 4 0 0 1 0 7.75" }));
 const DollarSign = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "12", x2: "12", y1: "2", y2: "22" }), React.createElement('path', { d: "M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }));
@@ -37,13 +37,10 @@ const Linkedin = (props) => React.createElement('svg', { ...props, xmlns: "http:
 const Twitter = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" }));
 const Facebook = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" }));
 const Calendar = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('rect', { width: "18", height: "18", x: "3", y: "4", rx: "2", ry: "2" }), React.createElement('line', { x1: "16", x2: "16", y1: "2", y2: "6" }), React.createElement('line', { x1: "8", x2: "8", y1: "2", y2: "6" }), React.createElement('line', { x1: "3", x2: "21", y1: "10", y2: "10" }));
-const Target = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('circle', { cx: "12", cy: "12", r: "6" }), React.createElement('circle', { cx: "12", cy: "12", r: "2" }));
-const Award = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "8", r: "6" }), React.createElement('path', { d: "M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" }));
-const Zap = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('polygon', { points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2" }));
 const AlertCircle = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('line', { x1: "12", x2: "12", y1: "8", y2: "12" }), React.createElement('line', { x1: "12", x2: "12.01", y1: "16", y2: "16" }));
 const Globe = (props) => React.createElement('svg', { ...props, xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('circle', { cx: "12", cy: "12", r: "10" }), React.createElement('line', { x1: "2", x2: "22", y1: "12", y2: "12" }), React.createElement('path', { d: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" }));
 
-function ICPChecker() {
+function CompanyEnrichment() {
   const [domain, setDomain] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [companyData, setCompanyData] = useState(null);
@@ -58,18 +55,11 @@ function ICPChecker() {
   const [hasMoreEmployees, setHasMoreEmployees] = useState(false);
   const [proxyUrl, setProxyUrl] = useState('https://wiza-proxy.onrender.com');
   
-  // Ref for auto-scrolling
   const employeesRef = React.useRef(null);
 
   const visableGreen = '#84BD00';
   const visableNavy = '#002B49';
   const visableOrange = '#FF6B35';
-  const visableGray = '#9CA3AF';
-
-  // API KEYS
-  const OPENAI_API_KEY = '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';
-  const WIZA_API_KEY = '9b1a3dc7adf103da93e7abe5f39e588d54eafdddfaeb9ab540726d3f5f590a3d';
-  const COMPANYENRICH_API_KEY = 'G4CG7Y9JVz4eX0nEykxikx';
 
   const cleanDomain = (url) => {
     try {
@@ -80,841 +70,6 @@ function ICPChecker() {
     } catch {
       return url;
     }
-  };
-
-  const detectEcommerce = async (websiteUrl) => {
-    if (!websiteUrl) {
-      return {
-        hasEcommerce: false,
-        platform: 'Unknown',
-        confidence: 'low'
-      };
-    }
-
-    try {
-      console.log('🛒 Detecting e-commerce for:', websiteUrl);
-      
-      const response = await fetch(websiteUrl, {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-      });
-
-      if (!response.ok) {
-        console.warn('⚠️ Could not fetch website for e-commerce detection');
-        return {
-          hasEcommerce: false,
-          platform: 'Unknown',
-          confidence: 'low',
-          error: 'Could not fetch website'
-        };
-      }
-
-      const html = await response.text();
-      const htmlLower = html.toLowerCase();
-
-      const platforms = {
-        'Shopify': [
-          'cdn.shopify.com',
-          'shopify-analytics',
-          'shopify.theme',
-          'shopifycdn.com',
-          'shopify-payment-button'
-        ],
-        'WooCommerce': [
-          'woocommerce',
-          'wc-ajax',
-          'wp-content/plugins/woocommerce',
-          'class="woocommerce"'
-        ],
-        'Magento': [
-          'mage/cookies',
-          'magento',
-          'mage-',
-          'varien/js',
-          'skin/frontend'
-        ],
-        'BigCommerce': [
-          'bigcommerce',
-          'cdn.bcapp',
-          'bigcommerce-cdn'
-        ],
-        'Wix': [
-          'wix.com',
-          'wixstatic.com',
-          'wix-code',
-          'parastorage.com'
-        ],
-        'Squarespace': [
-          'squarespace.com',
-          'squarespace-cdn',
-          'sqsp.com'
-        ],
-        'PrestaShop': [
-          'prestashop',
-          'ps_version',
-          'prestablog'
-        ],
-        'OpenCart': [
-          'catalog/view/theme',
-          'route=product/product',
-          'opencart'
-        ],
-        'Salesforce Commerce Cloud': [
-          'demandware',
-          'salesforce.com/commerce'
-        ],
-        'SAP Commerce': [
-          'hybris',
-          '_csrf',
-          'sap-commerce'
-        ],
-        'Custom/Unknown': []
-      };
-
-      let detectedPlatform = 'None';
-      let confidence = 'low';
-
-      for (const [platform, patterns] of Object.entries(platforms)) {
-        if (platform === 'Custom/Unknown') continue;
-        
-        let matchCount = 0;
-        for (const pattern of patterns) {
-          if (htmlLower.includes(pattern.toLowerCase())) {
-            matchCount++;
-          }
-        }
-
-        if (matchCount > 0) {
-          detectedPlatform = platform;
-          confidence = matchCount >= 2 ? 'high' : 'medium';
-          console.log(`✅ E-commerce detected: ${platform} (${matchCount} matches)`);
-          break;
-        }
-      }
-
-      const ecommerceIndicators = [
-        'add to cart',
-        'shopping cart',
-        'checkout',
-        'product-',
-        'buy now',
-        'add-to-cart',
-        'shopping-bag',
-        'cart-icon',
-        'e-commerce',
-        'ecommerce',
-        'online shop',
-        'webshop'
-      ];
-
-      let ecommerceSignals = 0;
-      for (const indicator of ecommerceIndicators) {
-        if (htmlLower.includes(indicator)) {
-          ecommerceSignals++;
-        }
-      }
-
-      const hasEcommerce = detectedPlatform !== 'None' || ecommerceSignals >= 3;
-
-      if (hasEcommerce && detectedPlatform === 'None') {
-        detectedPlatform = 'Custom/Unknown';
-        confidence = 'medium';
-      }
-
-      return {
-        hasEcommerce,
-        platform: detectedPlatform,
-        confidence,
-        indicators: ecommerceSignals
-      };
-
-    } catch (err) {
-      console.error('❌ E-commerce detection error:', err);
-      return {
-        hasEcommerce: false,
-        platform: 'Unknown',
-        confidence: 'low',
-        error: err.message
-      };
-    }
-  };
-
-  const classifyWithGPT4 = async (ceData, wizaData) => {
-    const hasData = ceData || wizaData;
-    
-    if (!hasData) {
-      return {
-        industry: 'Unknown',
-        supplier_type: 'Unknown',
-        distribution_area: 'Unknown',
-        employees: 'Unknown',
-        icp_match: false,
-        reason: 'No data available from APIs',
-        domain_found: false
-      };
-    }
-
-    const wizaEmployees = wizaData?.data?.company_size;
-    const wizaRange = wizaData?.data?.company_size_range;
-    const ceEmployees = ceData?.employees;
-    
-    let employeeCount = 0;
-    let hasEmployeeData = false;
-    
-    if (ceEmployees && !isNaN(parseInt(ceEmployees)) && parseInt(ceEmployees) > 1) {
-      employeeCount = parseInt(ceEmployees);
-      hasEmployeeData = true;
-      console.log('✅ Using CompanyEnrich employee count:', employeeCount);
-    } 
-    else if (wizaEmployees && !isNaN(parseInt(wizaEmployees)) && parseInt(wizaEmployees) > 1) {
-      employeeCount = parseInt(wizaEmployees);
-      hasEmployeeData = true;
-      console.log('✅ Using Wiza employee count:', employeeCount);
-    }
-    else if (wizaEmployees && parseInt(wizaEmployees) === 1) {
-      console.log('⚠️ Wiza reports 1 employee (likely unreliable), will use GPT-4 estimation');
-      hasEmployeeData = false;
-    }
-    else {
-      console.log('⚠️ No reliable employee data found, will use GPT-4 estimation');
-    }
-    
-    let sizeCategory = 'Unknown';
-    if (employeeCount >= 1 && employeeCount <= 4) sizeCategory = '1-4';
-    else if (employeeCount >= 5 && employeeCount <= 9) sizeCategory = '5-9';
-    else if (employeeCount >= 10 && employeeCount <= 19) sizeCategory = '10-19';
-    else if (employeeCount >= 20 && employeeCount <= 49) sizeCategory = '20-49';
-    else if (employeeCount >= 50 && employeeCount <= 99) sizeCategory = '50-99';
-    else if (employeeCount >= 100 && employeeCount <= 199) sizeCategory = '100-199';
-    else if (employeeCount >= 200 && employeeCount <= 499) sizeCategory = '200-499';
-    else if (employeeCount >= 500) sizeCategory = '500+';
-    else if (wizaRange) sizeCategory = wizaRange;
-    
-    const industry = ceData?.industry || wizaData?.data?.company_industry || '';
-    const description = (ceData?.description || wizaData?.data?.company_description || '');
-    const country = (ceData?.location?.country?.name || wizaData?.data?.company_country || '');
-    const categories = (ceData?.categories || []).join('; ');
-    const keywords = (ceData?.keywords || []).join('; ');
-    const revenue = wizaData?.data?.company_revenue_range || ceData?.financial?.total_funding || '';
-    
-    // EXACT 67 ICP Industries from Visable - DO NOT MODIFY
-    const icpIndustries = [
-      'Surface treatment machinery',
-      'Sealing technology',
-      'Installation',
-      'Machine parts',
-      'Wood and wood products',
-      'Electrical services',
-      'Vehicles',
-      'Casting and injection molding machinery',
-      'Construction machinery and equipment',
-      'Metal and metal products',
-      'Valve technology',
-      'Pipe and hose technology',
-      'Filter and sieve technology',
-      'Cable technology',
-      'Cleaning supplies',
-      'Packaging machinery',
-      'Heat treatment',
-      'Fluid technology',
-      'Electrical engineering',
-      'Industrial supplies',
-      'Control technology',
-      'Surface treatment',
-      'Measuring and testing technology',
-      'Catering technology and kitchen equipment',
-      'Home textiles',
-      'Tools and production supplies',
-      'Fastening technology, joining technology and fittings',
-      'Machining and forming',
-      'Sports',
-      'Environmental technology',
-      'Traffic engineering',
-      'Cleaning equipment and machinery',
-      'Food technology',
-      'Repair, maintenance and modernization',
-      'Plastics and plastic products',
-      'Robotics, process and automation technology',
-      'Conveyor technology',
-      'Building materials and supplies',
-      'Casting, injection molding and additive manufacturing',
-      'Drive technology',
-      'Leather, textile fibers, yarns and fabrics',
-      'Raw materials and chemistry',
-      'Pump technology',
-      'Mechanical engineering, plant construction and apparatus construction',
-      'Joining and bonding',
-      'Containers, logistics and storage supplies',
-      'Packaging material',
-      'Soldering, welding and bonding technology',
-      'Process technology',
-      'Office supplies',
-      'Refrigeration, air conditioning, ventilation and heating technology',
-      'Packaging services',
-      'Accumulator and battery technology',
-      'Glass and ceramic products',
-      'Marking technology',
-      'Printing and paper',
-      'Safety and rescue technology',
-      'Clothing and accessories',
-      'Services from agriculture, forestry, fishery, horticulture',
-      'Multimedia',
-      'Machine tools and equipment',
-      'Construction',
-      'Lighting technology',
-      'Training and education',
-      'Food and beverage',
-      'Hygiene and cosmetic products',
-      'Textile production'
-    ];
-
-    const prompt = `You are an expert B2B industry classifier for a German manufacturing/industrial marketplace.
-
-COMPANY DATA:
-- Industry: ${industry}
-- Description: ${description}
-- Categories: ${categories}
-- Keywords: ${keywords}
-- Country: ${country}
-- Employee Count: ${hasEmployeeData ? employeeCount : 'NOT PROVIDED - MUST ESTIMATE'}
-- Employee Range: ${sizeCategory}
-- Revenue: ${revenue}
-
-YOUR TASK: Classify this company according to these ICP criteria:
-
-1. INDUSTRY - Match to industries from this list (can be MULTIPLE, but LIMIT TO 5 MAX):
-${icpIndustries.map((ind, idx) => `${idx + 1}. ${ind}`).join('\n')}
-
-IMPORTANT: 
-- Search ALL fields: Industry, Description, Categories, AND Keywords
-- List up to 5 industries if multiple truly apply (semicolon-separated)
-- If no good match exists, use format: "Other: [original industry name]"
-- Only list multiple if genuinely applicable (not just loosely related)
-- Pay special attention to German terms:
-  * "Glas" / "Schauglas" / "Sichtglas" = Glass and ceramic products
-  * "Armaturen" = Valve technology or fittings
-  * "Behälter" = Containers
-  * "Anlagen" = Plant construction
-  * "Maschinen" = Machinery
-
-2. SUPPLIER TYPE - Choose ALL that truly apply (semicolon-separated if multiple):
-- Manufacturer (produces/manufactures products)
-- Customer Specific Manufacturing (custom manufacturing)
-- Distributor (distributes products)
-- Wholesaler (wholesale trading)
-- Service Provider (primarily services)
-
-Example: "Manufacturer; Distributor" if they both manufacture AND distribute
-Only use multiple if the company genuinely operates in both capacities.
-
-3. EMPLOYEE SIZE ESTIMATION:
-Current data: ${hasEmployeeData ? `${employeeCount} employees (${sizeCategory})` : 'NO EMPLOYEE DATA PROVIDED'}
-
-${!hasEmployeeData ? `
-🚨 CRITICAL: Since NO employee data was provided, you MUST make an EDUCATED GUESS based on:
-- Company description (scale indicators: "leading", "international", "small team", "startup", etc.)
-- Revenue/funding indicators
-- Distribution area (Regional = smaller, International = larger)
-- Market presence and maturity
-- Office locations mentioned
-- Technology stack complexity
-
-⚠️ IMPORTANT ESTIMATION GUIDELINES - BE CONSERVATIVE (bias toward SMALLER sizes):
-- "Small startup" / "small team" / "boutique" / "family business" → 5-9
-- "Growing company" / "established local" / "supplier" → 10-19
-- "Established manufacturer" / "regional distributor" → 20-49
-- "National presence" / "leading regional" → 20-49 or 50-99
-- "European presence" / "international" → 50-99 or 100-199
-- "Major manufacturer" / "leading European" → 100-199
-- "Global leader" / "multinational" / "enterprise" → 200-499
-- Only use 500+ for very clear indicators like "Fortune 500", "thousands of employees", "10+ offices worldwide"
-
-DEFAULT: When in doubt, estimate 10-19 (most common for specialized B2B suppliers)
-
-Choose from: 1-4, 5-9, 10-19, 20-49, 50-99, 100-199, 200-499, 500+
-Add "(estimated)" after your guess, e.g., "20-49 (estimated)"
-` : `
-Employee data available: ${employeeCount} (${sizeCategory})
-No estimation needed.
-`}
-
-4. DISTRIBUTION AREA - Based on company description and size:
-- Regional (local/city/state level operations)
-- National (operates across one country)
-- European (multiple European countries)
-- International (global/worldwide operations)
-
-5. ICP MATCH CRITERIA (ALL must pass):
-✓ Employee Size: MUST be one of: 5-9, 10-19, 20-49, 50-99, 100-199, 200-499 (NOT 1-4, NOT 500+)
-✓ Industry: MUST match at least one from the list above (not "Other:")
-✓ Distribution: International, European, or National preferred (Regional is acceptable but less preferred)
-✓ Supplier Type: All types accepted
-Note: Country is NOT a blocker - all countries accepted
-
-RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
-{
-  "industry": "up to 5 exact industry names from list or Other: [name]",
-  "supplier_type": "one or more types semicolon-separated",
-  "distribution_area": "one of the 4 areas above",
-  "employees": "${hasEmployeeData ? sizeCategory : 'your estimated range (estimated)'}",
-  "icp_match": true or false,
-  "reason": "brief explanation with ✓ for pass, ✗ for fail, ~ for partial. ${!hasEmployeeData ? 'Explain your size estimation reasoning.' : ''}"
-}`;
-
-    try {
-      if (!OPENAI_API_KEY || OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE') {
-        console.warn('⚠️ OpenAI API key not set, using fallback classification');
-        return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
-      }
-
-      console.log('🤖 Calling GPT-4 via proxy for intelligent classification...');
-      
-      const gptResponse = await fetch(`${proxyUrl}/api/openai/classify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: prompt
-        })
-      });
-
-      if (gptResponse.ok) {
-        const gptData = await gptResponse.json();
-        let responseText = gptData.choices[0].message.content.trim();
-        
-        responseText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        
-        console.log('✅ GPT-4 Response:', responseText);
-        
-        const classification = JSON.parse(responseText);
-        classification.domain_found = true;
-        return classification;
-      } else {
-        const errorText = await gptResponse.text();
-        console.error('❌ GPT-4 API failed:', gptResponse.status, errorText);
-        throw new Error(`GPT-4 API failed: ${gptResponse.status}`);
-      }
-    } catch (err) {
-      console.error('❌ GPT-4 classification error:', err);
-      console.warn('⚠️ Falling back to simple classification');
-      return fallbackClassification(ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData);
-    }
-  };
-
-  const fallbackClassification = (ceData, wizaData, sizeCategory, industry, description, country, employeeCount, icpIndustries, hasEmployeeData) => {
-    console.log('🔄 Using fallback classification with priority order: Industries → NAICS → Keywords → Description');
-    
-    const descLower = description.toLowerCase();
-    
-    // Get all available data sources
-    const ceIndustries = ceData?.industries || [];  // CompanyEnrich industries array
-    const ceNaics = ceData?.naics || [];  // CompanyEnrich NAICS codes
-    const ceKeywords = ceData?.keywords || [];  // CompanyEnrich keywords
-    const categories = ceData?.categories || [];
-    
-    console.log('📊 Available data sources:', {
-      industries: ceIndustries.length,
-      naics: ceNaics.length,
-      keywords: ceKeywords.length,
-      categories: categories.length,
-      description: description ? 'yes' : 'no'
-    });
-    
-    // Employee size estimation
-    if (!hasEmployeeData || sizeCategory === 'Unknown') {
-      console.log('⚠️ No employee data, estimating from description...');
-      
-      const sizeIndicators = {
-        'startup': '5-9',
-        'small team': '5-9',
-        'small business': '5-9',
-        'boutique': '5-9',
-        'family business': '5-9',
-        'growing': '10-19',
-        'established': '20-49',
-        'medium': '20-49',
-        'medium-sized': '20-49',
-        'leading': '50-99',
-        'major': '100-199',
-        'large': '100-199',
-        'enterprise': '200-499',
-        'global leader': '200-499',
-        'multinational': '200-499',
-        'fortune 500': '500+',
-        'thousands of employees': '500+'
-      };
-      
-      let estimatedSize = null;
-      
-      for (const [indicator, range] of Object.entries(sizeIndicators)) {
-        if (descLower.includes(indicator)) {
-          estimatedSize = range + ' (estimated)';
-          console.log(`✅ Found "${indicator}" → estimated ${range}`);
-          break;
-        }
-      }
-      
-      if (!estimatedSize) {
-        if (descLower.includes('global') || descLower.includes('worldwide') || descLower.includes('multinational')) {
-          estimatedSize = '100-199 (estimated)';
-        } else if (descLower.includes('international')) {
-          estimatedSize = '50-99 (estimated)';
-        } else if (descLower.includes('europe') || descLower.includes('european')) {
-          estimatedSize = '20-49 (estimated)';
-        } else if (descLower.includes('national')) {
-          estimatedSize = '10-19 (estimated)';
-        } else {
-          estimatedSize = '10-19 (estimated)';
-        }
-      }
-      
-      sizeCategory = estimatedSize;
-    }
-    
-    // INDUSTRY MATCHING - Priority Order
-    const matchedIndustries = [];
-    let matchSource = '';
-    
-    // Enhanced keyword mapping for better matching
-    const industryKeywordMap = {
-      'Glass and ceramic products': ['glass', 'glas', 'ceramic', 'keramik', 'schauglas', 'sichtglas', 'glasprodukt', 'glaswaren'],
-      'Metal and metal products': ['metal', 'metall', 'steel', 'stahl', 'aluminum', 'aluminium', 'iron', 'eisen'],
-      'Valve technology': ['valve', 'ventil', 'armaturen', 'fitting', 'fittings'],
-      'Pipe and hose technology': ['pipe', 'rohr', 'hose', 'schlauch', 'rohrleitung', 'tubing'],
-      'Electrical engineering': ['electrical', 'elektro', 'electric', 'electronics', 'elektronik'],
-      'Control technology': ['control', 'steuerung', 'automation', 'regelung'],
-      'Industrial supplies': ['industrial', 'industrie', 'supplies', 'zubehör', 'industrial supplies'],
-      'Measuring and testing technology': ['measuring', 'testing', 'mess', 'prüf', 'level indicator', 'level gauge', 'sensor'],
-      'Process technology': ['process', 'prozess'],
-      'Mechanical engineering, plant construction and apparatus construction': ['mechanical', 'engineering', 'maschinen', 'anlagen', 'plant engineering', 'apparatus'],
-      'Containers, logistics and storage supplies': ['container', 'storage', 'lager', 'behälter', 'storage applications', 'logistics'],
-      'Wood and wood products': ['wood', 'holz', 'timber', 'lumber'],
-      'Plastics and plastic products': ['plastic', 'kunststoff', 'polymer'],
-      'Printing and paper': ['printing', 'druck', 'paper', 'papier'],
-      'Food technology': ['food', 'lebensmittel', 'beverage', 'getränke'],
-      'Packaging machinery': ['packaging', 'verpackung'],
-      'Cleaning supplies': ['cleaning', 'reinigung'],
-      'Safety and rescue technology': ['safety', 'sicherheit', 'rescue', 'rettung'],
-      'Machine tools and equipment': ['machine tool', 'cnc', 'lathe', 'milling'],
-      'Construction machinery and equipment': ['construction', 'bau', 'excavator', 'crane'],
-      'Robotics, process and automation technology': ['robot', 'robotics', 'automation', 'automatisierung']
-    };
-    
-    // NAICS to ICP Industry mapping
-    const naicsToICP = {
-      '3272': 'Glass and ceramic products',
-      '327': 'Glass and ceramic products',
-      '3332': 'Valve technology',
-      '332': 'Metal and metal products',
-      '3331': 'Metal and metal products',
-      '3261': 'Plastics and plastic products',
-      '3259': 'Printing and paper',
-      '3221': 'Printing and paper',
-      '3339': 'Measuring and testing technology',
-      '3345': 'Measuring and testing technology',
-      '3353': 'Electrical engineering',
-      '335': 'Electrical engineering',
-      '3335': 'Control technology',
-      '3336': 'Drive technology',
-      '3333': 'Construction machinery and equipment',
-      '3321': 'Valve technology',
-      '3334': 'Heating and cooling equipment',
-      '311': 'Food technology',
-      '3115': 'Food and beverage',
-      '3116': 'Food and beverage',
-      '3253': 'Cleaning supplies',
-      '3256': 'Textile production',
-      '321': 'Wood and wood products'
-    };
-    
-    // PRIORITY 1: Match using Industries from CompanyEnrich
-    if (ceIndustries.length > 0) {
-      console.log('🎯 PRIORITY 1: Checking Industries from CompanyEnrich:', ceIndustries);
-      
-      // Check if this is a service/platform company based on industries
-      const allIndustriesText = ceIndustries.join(' ').toLowerCase();
-      const isServiceBased = allIndustriesText.includes('services') || 
-                            allIndustriesText.includes('advertising') ||
-                            allIndustriesText.includes('marketing') ||
-                            allIndustriesText.includes('software') ||
-                            allIndustriesText.includes('data collection') ||
-                            allIndustriesText.includes('internet portal');
-      
-      if (isServiceBased) {
-        console.log('⚠️ Service/Platform company detected via Industries - limiting product industry matches');
-      }
-      
-      for (const ceIndustry of ceIndustries) {
-        if (matchedIndustries.length >= 5) break;
-        
-        const ceIndLower = ceIndustry.toLowerCase();
-        
-        // Direct match
-        for (const icpInd of icpIndustries) {
-          if (matchedIndustries.includes(icpInd)) continue;
-          
-          const icpLower = icpInd.toLowerCase();
-          
-          // Skip industrial product categories for service companies
-          if (isServiceBased) {
-            const serviceExclusions = [
-              'Industrial supplies',
-              'Machine parts',
-              'Metal and metal products',
-              'Electrical engineering',
-              'Mechanical engineering, plant construction and apparatus construction',
-              'Construction machinery and equipment',
-              'Machine tools and equipment'
-            ];
-            
-            if (serviceExclusions.includes(icpInd)) {
-              continue;
-            }
-          }
-          
-          // Check if ICP industry is contained in CE industry or vice versa
-          if (ceIndLower.includes(icpLower) || icpLower.includes(ceIndLower)) {
-            matchedIndustries.push(icpInd);
-            matchSource = 'Industries';
-            console.log(`✅ Matched "${icpInd}" via Industries: "${ceIndustry}"`);
-            break;
-          }
-          
-          // Check via keyword map
-          if (industryKeywordMap[icpInd]) {
-            for (const keyword of industryKeywordMap[icpInd]) {
-              // Skip "industrial" keyword for service companies
-              if (isServiceBased && (keyword === 'industrial' || keyword === 'industrie')) {
-                continue;
-              }
-              
-              if (ceIndLower.includes(keyword)) {
-                matchedIndustries.push(icpInd);
-                matchSource = 'Industries';
-                console.log(`✅ Matched "${icpInd}" via Industries keyword: "${keyword}" in "${ceIndustry}"`);
-                break;
-              }
-            }
-            if (matchedIndustries.includes(icpInd)) break;
-          }
-        }
-      }
-    }
-    
-    // PRIORITY 2: Match using NAICS codes from CompanyEnrich
-    if (matchedIndustries.length < 5 && ceNaics.length > 0) {
-      console.log('🎯 PRIORITY 2: Checking NAICS codes from CompanyEnrich:', ceNaics);
-      
-      for (const naicsObj of ceNaics) {
-        if (matchedIndustries.length >= 5) break;
-        
-        const naicsCode = naicsObj.code || naicsObj;
-        const naicsDesc = naicsObj.description || '';
-        
-        console.log(`  Checking NAICS: ${naicsCode} - ${naicsDesc}`);
-        
-        // Check NAICS code mapping
-        const naicsPrefix = naicsCode.substring(0, 4);
-        const naicsPrefix3 = naicsCode.substring(0, 3);
-        
-        if (naicsToICP[naicsPrefix] && !matchedIndustries.includes(naicsToICP[naicsPrefix])) {
-          matchedIndustries.push(naicsToICP[naicsPrefix]);
-          matchSource = matchSource || 'NAICS';
-          console.log(`✅ Matched "${naicsToICP[naicsPrefix]}" via NAICS code: ${naicsCode}`);
-        } else if (naicsToICP[naicsPrefix3] && !matchedIndustries.includes(naicsToICP[naicsPrefix3])) {
-          matchedIndustries.push(naicsToICP[naicsPrefix3]);
-          matchSource = matchSource || 'NAICS';
-          console.log(`✅ Matched "${naicsToICP[naicsPrefix3]}" via NAICS code: ${naicsCode}`);
-        }
-        
-        // Also check NAICS description
-        if (naicsDesc) {
-          const naicsDescLower = naicsDesc.toLowerCase();
-          
-          for (const icpInd of icpIndustries) {
-            if (matchedIndustries.length >= 5) break;
-            if (matchedIndustries.includes(icpInd)) continue;
-            
-            if (industryKeywordMap[icpInd]) {
-              for (const keyword of industryKeywordMap[icpInd]) {
-                if (naicsDescLower.includes(keyword)) {
-                  matchedIndustries.push(icpInd);
-                  matchSource = matchSource || 'NAICS';
-                  console.log(`✅ Matched "${icpInd}" via NAICS description: "${keyword}" in "${naicsDesc}"`);
-                  break;
-                }
-              }
-              if (matchedIndustries.includes(icpInd)) break;
-            }
-          }
-        }
-      }
-    }
-    
-    // PRIORITY 3: Match using Keywords from CompanyEnrich
-    if (matchedIndustries.length < 5 && ceKeywords.length > 0) {
-      console.log('🎯 PRIORITY 3: Checking Keywords from CompanyEnrich:', ceKeywords);
-      
-      const keywordsText = ceKeywords.join(' ').toLowerCase();
-      
-      // Exclusion patterns - if these are present, skip certain industries
-      const isMarketplace = keywordsText.includes('marketplace') || keywordsText.includes('platform');
-      const isAdvertising = keywordsText.includes('advertising') || keywordsText.includes('marketing') || keywordsText.includes('lead generation');
-      const isSoftware = keywordsText.includes('software') || keywordsText.includes('saas') || keywordsText.includes('digital');
-      
-      // Service provider indicators - should NOT match industrial categories
-      const isServiceProvider = isMarketplace || isAdvertising || isSoftware;
-      
-      if (isServiceProvider) {
-        console.log('⚠️ Detected service provider indicators - will skip industrial product matches');
-      }
-      
-      for (const icpInd of icpIndustries) {
-        if (matchedIndustries.length >= 5) break;
-        if (matchedIndustries.includes(icpInd)) continue;
-        
-        // Skip industrial product categories for service providers
-        if (isServiceProvider) {
-          const serviceExclusions = [
-            'Industrial supplies',
-            'Machine parts',
-            'Metal and metal products',
-            'Electrical engineering',
-            'Mechanical engineering, plant construction and apparatus construction'
-          ];
-          
-          if (serviceExclusions.includes(icpInd)) {
-            continue; // Skip these for service companies
-          }
-        }
-        
-        if (industryKeywordMap[icpInd]) {
-          for (const keyword of industryKeywordMap[icpInd]) {
-            // Extra check: don't match "industrial" if it's part of "industrial marketplace/platform"
-            if ((keyword === 'industrial' || keyword === 'industrie') && 
-                (keywordsText.includes('industrial marketplace') || 
-                 keywordsText.includes('industrial platform') ||
-                 keywordsText.includes('industrie marktplatz'))) {
-              console.log(`⚠️ Skipping "${keyword}" - detected in service context`);
-              continue; // Skip this keyword entirely
-            }
-            
-            if (keywordsText.includes(keyword)) {
-              matchedIndustries.push(icpInd);
-              matchSource = matchSource || 'Keywords';
-              console.log(`✅ Matched "${icpInd}" via Keywords: "${keyword}"`);
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-    // PRIORITY 4: Match using Description (last resort)
-    if (matchedIndustries.length < 5 && description) {
-      console.log('🎯 PRIORITY 4: Checking Description (last resort)');
-      
-      for (const icpInd of icpIndustries) {
-        if (matchedIndustries.length >= 5) break;
-        if (matchedIndustries.includes(icpInd)) continue;
-        
-        const icpLower = icpInd.toLowerCase();
-        
-        // Direct match in description
-        if (descLower.includes(icpLower)) {
-          matchedIndustries.push(icpInd);
-          matchSource = matchSource || 'Description';
-          console.log(`✅ Matched "${icpInd}" via Description: direct match`);
-          continue;
-        }
-        
-        // Keyword match in description
-        if (industryKeywordMap[icpInd]) {
-          for (const keyword of industryKeywordMap[icpInd]) {
-            if (descLower.includes(keyword)) {
-              matchedIndustries.push(icpInd);
-              matchSource = matchSource || 'Description';
-              console.log(`✅ Matched "${icpInd}" via Description keyword: "${keyword}"`);
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-    const finalIndustry = matchedIndustries.length > 0 
-      ? matchedIndustries.join('; ')
-      : (industry ? `Other: ${industry}` : 'Unknown');
-    
-    console.log(`🎯 Final industry classification: ${finalIndustry} (Source: ${matchSource || 'None'})`);
-
-    // Supplier Type Classification
-    const supplierTypes = [];
-    
-    if (descLower.includes('manufactur') || descLower.includes('production')) {
-      if (descLower.includes('custom')) {
-        supplierTypes.push('Customer Specific Manufacturing');
-      } else {
-        supplierTypes.push('Manufacturer');
-      }
-    }
-    
-    if (descLower.includes('distribut')) supplierTypes.push('Distributor');
-    if (descLower.includes('wholesal')) supplierTypes.push('Wholesaler');
-    if (descLower.includes('service') || descLower.includes('consulting')) {
-      supplierTypes.push('Service Provider');
-    }
-    
-    if (supplierTypes.length === 0) supplierTypes.push('Service Provider');
-    
-    const finalSupplierType = supplierTypes.join('; ');
-
-    let distArea = 'Regional';
-    
-    if (descLower.includes('global') || descLower.includes('worldwide')) {
-      distArea = 'International';
-    } else if (descLower.includes('europe') || descLower.includes('european')) {
-      distArea = 'European';
-    } else if (descLower.includes('national') || employeeCount > 100) {
-      distArea = 'National';
-    }
-
-    const reasons = [];
-    let isICP = true;
-
-    // Country check removed - accept all countries
-    
-    const actualSizeCategory = sizeCategory.replace(' (estimated)', '');
-    const icpSizes = ['5-9', '10-19', '20-49', '50-99', '100-199', '200-499'];
-    
-    if (!icpSizes.includes(actualSizeCategory)) {
-      if (actualSizeCategory !== 'Unknown') {
-        isICP = false;
-        reasons.push(`✗ Size ${sizeCategory} outside ICP range`);
-      }
-    } else {
-      reasons.push(`✓ ICP size: ${sizeCategory}`);
-    }
-
-    if (matchedIndustries.length === 0) {
-      isICP = false;
-      reasons.push(`✗ Industry not in ICP list`);
-    } else {
-      reasons.push(`✓ Industry match`);
-    }
-    
-    return {
-      industry: finalIndustry,
-      supplier_type: finalSupplierType,
-      distribution_area: distArea,
-      employees: sizeCategory,
-      icp_match: isICP,
-      reason: reasons.join(' | '),
-      domain_found: true
-    };
   };
 
   const handleSearch = async () => {
@@ -938,14 +93,11 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       let wizaData = null;
       const errors = [];
 
+      // Call CompanyEnrich via proxy
       setProgress('Calling CompanyEnrich API...');
       try {
-        const ceResponse = await fetch(`https://api.companyenrich.com/companies/enrich?domain=${cleanedDomain}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${COMPANYENRICH_API_KEY}`,
-            'Accept': 'application/json'
-          }
+        const ceResponse = await fetch(`${proxyUrl}/api/companyenrich/enrich?domain=${cleanedDomain}`, {
+          method: 'GET'
         });
 
         if (ceResponse.ok) {
@@ -963,12 +115,12 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 
       await new Promise(resolve => setTimeout(resolve, 1000));
 
+      // Call Wiza via proxy
       setProgress('Calling Wiza API...');
       try {
-        const wizaResponse = await fetch('https://wiza.co/api/company_enrichments', {
+        const wizaResponse = await fetch(`${proxyUrl}/api/wiza/company-enrich`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${WIZA_API_KEY}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -991,17 +143,11 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
 
       setApiErrors(errors);
 
-      // Continue even if both APIs fail
-      setProgress('Analyzing with AI...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const classification = await classifyWithGPT4(ceData, wizaData);
-
-      // Skip e-commerce detection
-      // setProgress('Checking for e-commerce...');
-      // const websiteToCheck = ceData?.website || `https://${cleanedDomain}`;
-      // const ecommerceInfo = await detectEcommerce(websiteToCheck);
-      // console.log('🛒 E-commerce detection result:', ecommerceInfo);
+      if (!ceData && !wizaData) {
+        setError('No data found from APIs. Please check the domain and try again.');
+        setProgress('');
+        return;
+      }
 
       const combinedData = {
         ce_name: ceData?.name || '',
@@ -1014,6 +160,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         ce_industries: (ceData?.industries || []).join('; '),
         ce_keywords: (ceData?.keywords || []).join('; '),
         ce_technologies: (ceData?.technologies || []).join('; '),
+        ce_naics: (ceData?.naics || []).map(n => `${n.code}: ${n.description}`).join('; '),
         ce_address: ceData?.location?.address || '',
         ce_postal_code: ceData?.location?.postal_code || '',
         ce_phone: ceData?.location?.phone || '',
@@ -1041,19 +188,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         wiza_company_region: wizaData?.data?.company_region || '',
         wiza_company_funding: wizaData?.data?.company_funding || '',
         wiza_company_linkedin: wizaData?.data?.company_linkedin || '',
-        
-        final_industry: classification.industry,
-        final_supplier_type: classification.supplier_type,
-        final_distribution_area: classification.distribution_area,
-        final_employees: classification.employees,
-        icp_match: classification.icp_match,
-        final_reason: classification.reason,
-        domain_found: classification.domain_found !== false,
-        
-        // ecommerce_detected: ecommerceInfo.hasEcommerce,
-        // ecommerce_platform: ecommerceInfo.platform,
-        // ecommerce_confidence: ecommerceInfo.confidence,
-        // ecommerce_indicators: ecommerceInfo.indicators,
         
         _api_sources: {
           companyenrich: !!ceData,
@@ -1094,7 +228,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         page: page
       };
       
-      const response = await fetch('https://wiza-proxy.onrender.com/api/wiza/search-employees', {
+      const response = await fetch(`${proxyUrl}/api/wiza/search-employees`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1116,7 +250,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
             page: page
           };
           
-          const nameResponse = await fetch('https://wiza-proxy.onrender.com/api/wiza/search-employees', {
+          const nameResponse = await fetch(`${proxyUrl}/api/wiza/search-employees`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -1186,20 +320,11 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         }
       } else {
         console.error('❌ Employee search failed:', response.status);
-        
-        if (response.status === 0 || responseText.includes('Failed to fetch')) {
-          setError('❌ Cannot connect to proxy server. Make sure to run: python wiza_proxy.py');
-        } else {
-          setError(`Failed to search employees (${response.status})`);
-        }
+        setError(`Failed to search employees (${response.status})`);
       }
     } catch (err) {
       console.error('❌ Employee search error:', err);
-      if (err.message && err.message.includes('Failed to fetch')) {
-        setError('❌ Cannot connect to proxy server. Make sure proxy is running.');
-      } else {
-        setError(`Error searching employees: ${err.message || 'Unknown error'}`);
-      }
+      setError(`Error searching employees: ${err.message || 'Unknown error'}`);
     } finally {
       setIsLoadingEmployees(false);
     }
@@ -1244,7 +369,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
             enrichment_level: "full"
           };
           
-          const revealResponse = await fetch('https://wiza-proxy.onrender.com/api/wiza/individual-reveal', {
+          const revealResponse = await fetch(`${proxyUrl}/api/wiza/individual-reveal`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -1263,7 +388,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
             while (!completed && attempts < maxAttempts) {
               await new Promise(resolve => setTimeout(resolve, 3000));
               
-              const statusResponse = await fetch(`https://wiza-proxy.onrender.com/api/wiza/individual-reveal/${revealId}`, {
+              const statusResponse = await fetch(`${proxyUrl}/api/wiza/individual-reveal/${revealId}`, {
                 method: 'GET'
               });
               
@@ -1315,28 +440,26 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     }
   };
 
-  const sendToLionel = () => {
+  const exportToCSV = () => {
     if (!companyData) {
       alert('⚠️ No company data available. Please search for a company first.');
       return;
     }
     
-    // Helper function to split phone into country code and national number
     const splitPhone = (phoneNumber) => {
       if (!phoneNumber) return { countryCode: '', nationalNumber: '' };
       
       const cleaned = phoneNumber.replace(/\s+/g, '').replace(/[^\d+]/g, '');
       
-      // Common country code patterns
       const patterns = [
-        { code: '+49', length: 2 },   // Germany
-        { code: '+43', length: 2 },   // Austria
-        { code: '+41', length: 2 },   // Switzerland
-        { code: '+44', length: 2 },   // UK
-        { code: '+33', length: 2 },   // France
-        { code: '+1', length: 1 },    // US/Canada
-        { code: '+39', length: 2 },   // Italy
-        { code: '+34', length: 2 },   // Spain
+        { code: '+49', length: 2 },
+        { code: '+43', length: 2 },
+        { code: '+41', length: 2 },
+        { code: '+44', length: 2 },
+        { code: '+33', length: 2 },
+        { code: '+1', length: 1 },
+        { code: '+39', length: 2 },
+        { code: '+34', length: 2 },
       ];
       
       for (const pattern of patterns) {
@@ -1348,7 +471,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         }
       }
       
-      // Default: assume first 2-3 chars are country code
       if (cleaned.startsWith('+')) {
         const countryCode = cleaned.substring(0, 3);
         const nationalNumber = cleaned.substring(3);
@@ -1358,13 +480,10 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       return { countryCode: '', nationalNumber: cleaned };
     };
     
-    // Split company phone
     const companyPhone = splitPhone(companyData.ce_phone);
     
-    // Prepare CSV data for all revealed contacts
     const csvRows = [];
     
-    // CSV Headers
     const headers = [
       'Account Name',
       'Distribution Area',
@@ -1386,12 +505,10 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     csvRows.push(headers.join(','));
     
-    // If we have revealed contacts, create a row for each
     if (revealedContacts.length > 0) {
       revealedContacts.forEach(contact => {
         const contactPhone = splitPhone(contact.revealed_data?.mobile_phone || contact.revealed_data?.phone_number);
         
-        // Split name into first and last
         const fullName = contact.full_name || '';
         const nameParts = fullName.split(' ');
         const firstName = nameParts[0] || '';
@@ -1399,7 +516,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         
         const row = [
           `"${companyData.ce_name || companyData.wiza_company_name || ''}"`,
-          `"${companyData.final_distribution_area || ''}"`,
+          '""',
           '"No Field Sales"',
           '"Self Research"',
           '"User_Interface"',
@@ -1419,10 +536,9 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
         csvRows.push(row.join(','));
       });
     } else {
-      // If no revealed contacts, create one row with just company data
       const row = [
         `"${companyData.ce_name || companyData.wiza_company_name || ''}"`,
-        `"${companyData.final_distribution_area || ''}"`,
+        '""',
         '"No Field Sales"',
         '"Self Research"',
         '"User_Interface"',
@@ -1442,16 +558,14 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
       csvRows.push(row.join(','));
     }
     
-    // Create CSV content
     const csvContent = csvRows.join('\n');
     
-    // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     
     link.setAttribute('href', url);
-    link.setAttribute('download', `lionel_leads_${companyData.ce_domain || domain}_${Date.now()}.csv`);
+    link.setAttribute('download', `company_data_${companyData.ce_domain || domain}_${Date.now()}.csv`);
     link.style.visibility = 'hidden';
     
     document.body.appendChild(link);
@@ -1460,47 +574,6 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
     
     alert(`✅ CSV downloaded successfully!\n\n${revealedContacts.length > 0 ? `${revealedContacts.length} contact(s) included` : 'Company data only (no contacts revealed yet)'}`);
   };
-
-  // Determine status color and blocker type
-  const getStatusInfo = () => {
-    if (!companyData.domain_found) {
-      return { color: visableGray, text: 'Domain Not Found', icon: 'alert' };
-    }
-    
-    if (companyData.icp_match) {
-      return { color: '#86efac', text: 'ICP Match ✓', icon: 'check' };
-    }
-    
-    // Analyze what's blocking ICP match
-    const reasons = companyData.final_reason || '';
-    const industry = companyData.final_industry || '';
-    const employees = companyData.final_employees || '';
-    const supplierType = companyData.final_supplier_type || '';
-    
-    // Hard blockers (RED)
-    // Country check removed - accept all countries
-    
-    // Check employee size - hard blocker if 1-4 or 500+
-    const employeeRange = employees.replace(' (estimated)', '');
-    if (employeeRange === '1-4' || employeeRange === '500+') {
-      return { color: '#ef4444', text: 'ICP Blocker: Employee Size', icon: 'x' };
-    }
-    
-    // Check if ONLY Service Provider (hard blocker)
-    if (supplierType === 'Service Provider' && !supplierType.includes(';')) {
-      return { color: '#ef4444', text: 'ICP Blocker: Service Provider Only', icon: 'x' };
-    }
-    
-    // Soft blocker (ORANGE) - Industry is the only issue
-    if (industry.startsWith('Other:')) {
-      return { color: visableOrange, text: 'ICP Blocker: Industry Not in List', icon: 'alert' };
-    }
-    
-    // Mixed/Other blockers (YELLOW)
-    return { color: '#fbbf24', text: 'Not ICP Match', icon: 'x' };
-  };
-
-  const statusInfo = companyData ? getStatusInfo() : null;
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', fontFamily: 'Arial, sans-serif', padding: '48px 24px' }}>
@@ -1523,10 +596,10 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
             <circle cx="12" cy="15" r="6" fill={visableGreen} />
           </svg>
           <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
-            ICP Checker
+            Company Enrichment Tool
           </h1>
           <p style={{ fontSize: '18px', color: '#6b7280' }}>
-            AI-powered company enrichment and ICP verification
+            Gather comprehensive company data from multiple sources
           </p>
         </div>
 
@@ -1587,7 +660,7 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
                   whiteSpace: 'nowrap'
                 }}
               >
-                {isLoading ? 'Checking...' : 'Check ICP'}
+                {isLoading ? 'Searching...' : 'Search Company'}
               </button>
             </div>
           </div>
@@ -1659,13 +732,13 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
           </div>
         )}
 
-        {/* Results Section */}
+        {/* Results Section - Continued in next part due to length... */}
         {companyData && !isLoading && (
           <div>
             {/* Status Header */}
             <div style={{
-              backgroundColor: !companyData.domain_found ? '#f3f4f6' : (companyData.icp_match ? '#dcfce7' : (statusInfo.color === visableOrange ? '#fff7ed' : '#fef2f2')),
-              border: `2px solid ${statusInfo.color}`,
+              backgroundColor: '#dcfce7',
+              border: `2px solid ${visableGreen}`,
               borderRadius: '16px',
               padding: '24px',
               marginBottom: '24px',
@@ -1674,627 +747,597 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
               justifyContent: 'space-between'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                {statusInfo.icon === 'alert' ? (
-                  <AlertCircle style={{ width: '64px', height: '64px', color: statusInfo.color === visableGray ? visableGray : visableOrange }} />
-                ) : statusInfo.icon === 'check' ? (
-                  <CheckCircle style={{ width: '64px', height: '64px', color: '#16a34a' }} />
-                ) : (
-                  <XCircle style={{ width: '64px', height: '64px', color: '#ef4444' }} />
-                )}
+                <CheckCircle style={{ width: '64px', height: '64px', color: '#16a34a' }} />
                 <div>
-                  <h2 style={{ 
-                    fontSize: '32px', 
-                    fontWeight: 'bold', 
-                    color: !companyData.domain_found ? visableGray : (companyData.icp_match ? '#166534' : (statusInfo.color === visableOrange ? '#9a3412' : '#991b1b')), 
-                    marginBottom: '8px' 
-                  }}>
-                    {statusInfo.text}
+                  <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#166534', marginBottom: '8px' }}>
+                    ✓ Company Data Found
                   </h2>
-                  <p style={{ 
-                    fontSize: '18px', 
-                    color: !companyData.domain_found ? '#6b7280' : (companyData.icp_match ? '#15803d' : (statusInfo.color === visableOrange ? '#c2410c' : '#991b1b')), 
-                    marginBottom: '8px' 
-                  }}>
+                  <p style={{ fontSize: '18px', color: '#15803d', marginBottom: '8px' }}>
                     {companyData.ce_name || companyData.wiza_company_name || domain}
                   </p>
                 </div>
               </div>
             </div>
 
-            {companyData.domain_found && (
-              <>
-                {/* Full Company Details Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-                  {/* Left Column */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    {/* Company Overview */}
-                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                        <div>
-                          <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>
-                            {companyData.ce_name || companyData.wiza_company_name || domain}
-                          </h3>
-                          {companyData.ce_website && (
-                            <a href={companyData.ce_website} target="_blank" rel="noopener noreferrer" style={{
-                              color: '#3b82f6', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none'
-                            }}>
-                              {companyData.ce_domain || domain}
-                              <ExternalLink style={{ width: '14px', height: '14px' }} />
-                            </a>
-                          )}
+            {/* Company Details Grid - Simplified version showing only data */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+              {/* Left Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Company Overview */}
+                <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <div>
+                      <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '8px' }}>
+                        {companyData.ce_name || companyData.wiza_company_name || domain}
+                      </h3>
+                      {companyData.ce_website && (
+                        <a href={companyData.ce_website} target="_blank" rel="noopener noreferrer" style={{
+                          color: '#3b82f6', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none'
+                        }}>
+                          {companyData.ce_domain || domain}
+                          <ExternalLink style={{ width: '14px', height: '14px' }} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {(companyData.ce_description || companyData.wiza_company_description) && (
+                    <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '20px' }}>
+                      {companyData.ce_description || companyData.wiza_company_description}
+                    </p>
+                  )}
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                    {companyData.ce_founded_year && (
+                      <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <Calendar style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Founded</span>
+                        </div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
+                          {companyData.ce_founded_year}
                         </div>
                       </div>
+                    )}
 
-                      {(companyData.ce_description || companyData.wiza_company_description) && (
-                        <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '20px' }}>
-                          {companyData.ce_description || companyData.wiza_company_description}
-                        </p>
+                    {(companyData.wiza_company_size || companyData.ce_employees) && (
+                      <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <Users style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Employees</span>
+                        </div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
+                          {companyData.wiza_company_size_range || companyData.wiza_company_size || companyData.ce_employees}
+                        </div>
+                      </div>
+                    )}
+
+                    {companyData.wiza_company_revenue_range && (
+                      <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <DollarSign style={{ width: '18px', height: '18px', color: '#6b7280' }} />
+                          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Revenue</span>
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#111827' }}>
+                          {companyData.wiza_company_revenue_range}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Industries */}
+                {(companyData.ce_industry || companyData.ce_industries || companyData.wiza_company_industry) && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                      Industries
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {companyData.ce_industry && (
+                        <div style={{ padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '4px', fontWeight: '600' }}>Primary Industry</div>
+                          <div style={{ fontSize: '14px', color: '#166534' }}>{companyData.ce_industry}</div>
+                        </div>
                       )}
+                      {companyData.ce_industries && (
+                        <div style={{ padding: '12px', backgroundColor: '#eff6ff', borderRadius: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#1e40af', marginBottom: '4px', fontWeight: '600' }}>All Industries</div>
+                          <div style={{ fontSize: '14px', color: '#1e40af' }}>{companyData.ce_industries}</div>
+                        </div>
+                      )}
+                      {companyData.wiza_company_industry && (
+                        <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#92400e', marginBottom: '4px', fontWeight: '600' }}>Wiza Industry</div>
+                          <div style={{ fontSize: '14px', color: '#92400e' }}>{companyData.wiza_company_industry}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-                        {companyData.ce_founded_year && (
-                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <Calendar style={{ width: '18px', height: '18px', color: '#6b7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Founded</span>
-                            </div>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
-                              {companyData.ce_founded_year}
+                {/* NAICS Codes */}
+                {companyData.ce_naics && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                      NAICS Codes
+                    </h3>
+                    <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.8', whiteSpace: 'pre-line' }}>
+                      {companyData.ce_naics}
+                    </div>
+                  </div>
+                )}
+
+                {/* Keywords */}
+                {companyData.ce_keywords && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                      Keywords
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {companyData.ce_keywords.split(';').slice(0, 20).map((kw, idx) => (
+                        <span key={idx} style={{
+                          padding: '6px 12px', backgroundColor: '#f0fdf4', color: '#166534',
+                          borderRadius: '6px', fontSize: '13px', fontWeight: '500'
+                        }}>
+                          {kw.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Technologies */}
+                {companyData.ce_technologies && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                      Technology Stack
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {companyData.ce_technologies.split(';').slice(0, 20).map((tech, idx) => (
+                        <span key={idx} style={{
+                          padding: '6px 12px', backgroundColor: '#eff6ff', color: '#1e40af',
+                          borderRadius: '6px', fontSize: '13px', fontWeight: '500'
+                        }}>
+                          {tech.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Location */}
+                <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <MapPin style={{ width: '20px', height: '20px', color: visableGreen }} />
+                    Location
+                  </h3>
+                  <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.8' }}>
+                    {companyData.ce_city_name && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_city_name}</div>
+                        {companyData.ce_state_name && <div>{companyData.ce_state_name}</div>}
+                      </div>
+                    )}
+                    {companyData.ce_country_name && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_country_name}</div>
+                        {companyData.wiza_company_region && <div>{companyData.wiza_company_region}</div>}
+                      </div>
+                    )}
+                    {companyData.ce_address && (
+                      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+                        <div>{companyData.ce_address}</div>
+                        {companyData.ce_postal_code && <div>{companyData.ce_postal_code}</div>}
+                        {companyData.ce_phone && <div style={{ marginTop: '8px', color: '#3b82f6' }}>{companyData.ce_phone}</div>}
+                      </div>
+                    )}
+                    {companyData.wiza_company_location && !companyData.ce_city_name && (
+                      <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.wiza_company_location}</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Funding */}
+                {(companyData.ce_total_funding || companyData.wiza_company_funding) && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
+                      Funding
+                    </h3>
+                    <div style={{ marginBottom: '16px' }}>
+                      <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Total Funding</div>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
+                        {companyData.ce_total_funding || companyData.wiza_company_funding}
+                      </div>
+                    </div>
+                    {companyData.ce_funding_stage && (
+                      <div>
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Stage</div>
+                        <div style={{ padding: '8px 12px', backgroundColor: '#f0fdf4', borderRadius: '6px', fontSize: '14px', fontWeight: '600', color: '#166534', display: 'inline-block' }}>
+                          {companyData.ce_funding_stage}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Social Links */}
+                {(companyData.ce_linkedin_url || companyData.ce_twitter_url || companyData.ce_facebook_url || companyData.wiza_company_linkedin) && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>Social Profiles</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {(companyData.ce_linkedin_url || companyData.wiza_company_linkedin) && (
+                        <a href={companyData.ce_linkedin_url || companyData.wiza_company_linkedin} target="_blank" rel="noopener noreferrer" style={{
+                          padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                          alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                        }}>
+                          <Linkedin style={{ width: '20px', height: '20px', color: '#0077b5' }} />
+                          <span style={{ fontSize: '14px', fontWeight: '500' }}>LinkedIn</span>
+                        </a>
+                      )}
+                      {companyData.ce_twitter_url && (
+                        <a href={companyData.ce_twitter_url} target="_blank" rel="noopener noreferrer" style={{
+                          padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                          alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                        }}>
+                          <Twitter style={{ width: '20px', height: '20px', color: '#1da1f2' }} />
+                          <span style={{ fontSize: '14px', fontWeight: '500' }}>Twitter</span>
+                        </a>
+                      )}
+                      {companyData.ce_facebook_url && (
+                        <a href={companyData.ce_facebook_url} target="_blank" rel="noopener noreferrer" style={{
+                          padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
+                          alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
+                        }}>
+                          <Facebook style={{ width: '20px', height: '20px', color: '#4267b2' }} />
+                          <span style={{ fontSize: '14px', fontWeight: '500' }}>Facebook</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Stock Info */}
+                {companyData.ce_stock_symbol && (
+                  <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Globe style={{ width: '20px', height: '20px', color: visableGreen }} />
+                      Stock
+                    </h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Symbol</div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_symbol}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Exchange</div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_exchange}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => searchEmployees()}
+                disabled={isLoadingEmployees}
+                style={{
+                  padding: '16px 32px', 
+                  backgroundColor: isLoadingEmployees ? '#d1d5db' : '#3b82f6', 
+                  color: 'white',
+                  borderRadius: '12px', 
+                  fontWeight: '600', 
+                  border: 'none', 
+                  cursor: isLoadingEmployees ? 'not-allowed' : 'pointer', 
+                  fontSize: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                {isLoadingEmployees ? (
+                  <>
+                    <Loader style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite' }} />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    👥 Find Decision Makers
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={exportToCSV}
+                style={{
+                  padding: '16px 32px', backgroundColor: visableGreen, color: 'white',
+                  borderRadius: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px'
+                }}
+              >
+                📥 Download CSV
+              </button>
+              
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(companyData, null, 2));
+                  alert('✓ Data copied!');
+                }}
+                style={{
+                  padding: '16px 32px', backgroundColor: 'white', color: '#111827',
+                  borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
+                }}
+              >
+                Copy Data
+              </button>
+              
+              <button
+                onClick={() => { 
+                  setCompanyData(null); 
+                  setDomain(''); 
+                  setApiErrors([]); 
+                  setEmployees([]); 
+                  setSelectedEmployees([]); 
+                  setRevealedContacts([]);
+                  setEmployeePage(1);
+                }}
+                style={{
+                  padding: '16px 32px', backgroundColor: 'white', color: '#6b7280',
+                  borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
+                }}
+              >
+                New Search
+              </button>
+            </div>
+
+            {/* Employees and Revealed Contacts sections remain the same... */}
+            {/* (keeping the employee search and reveal functionality) */}
+            
+            {/* Employees List */}
+            {(employees.length > 0 || isLoadingEmployees) && (
+              <div ref={employeesRef} style={{ marginTop: '32px' }}>
+                <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                  
+                  {isLoadingEmployees && employees.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '48px 24px' }}>
+                      <Loader style={{ width: '48px', height: '48px', color: visableGreen, animation: 'spin 1s linear infinite', margin: '0 auto 24px' }} />
+                      <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
+                        🔍 Searching for Decision Makers...
+                      </h3>
+                      <p style={{ color: '#6b7280', fontSize: '16px' }}>
+                        Finding contacts at this company, please wait...
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                        <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
+                          👥 Decision Makers Found ({employees.length})
+                        </h3>
+                        <button
+                          onClick={revealSelectedEmployees}
+                          disabled={selectedEmployees.length === 0 || isLoadingEmployees}
+                          style={{
+                            padding: '12px 24px',
+                            backgroundColor: selectedEmployees.length > 0 && !isLoadingEmployees ? visableGreen : '#d1d5db',
+                            color: 'white',
+                            borderRadius: '8px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: selectedEmployees.length > 0 && !isLoadingEmployees ? 'pointer' : 'not-allowed',
+                            fontSize: '14px'
+                          }}
+                        >
+                          {isLoadingEmployees ? '⏳ Revealing...' : `🔓 Reveal Selected (${selectedEmployees.length})`}
+                        </button>
+                      </div>
+
+                      {progress && (
+                        <div style={{
+                          padding: '16px',
+                          backgroundColor: '#eff6ff',
+                          borderRadius: '12px',
+                          marginBottom: '20px',
+                          border: '2px solid #3b82f6'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <Loader style={{ width: '24px', height: '24px', color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
+                            <div>
+                              <div style={{ color: '#1e40af', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
+                                Processing Contact Reveal
+                              </div>
+                              <div style={{ color: '#3b82f6', fontSize: '13px' }}>
+                                {progress}
+                              </div>
                             </div>
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                        {(companyData.final_employees || companyData.wiza_company_size || companyData.ce_employees) && (
-                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <Users style={{ width: '18px', height: '18px', color: '#6b7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Employees</span>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
+                        {employees.map((employee) => {
+                          const uniqueKey = employee.uniqueKey;
+                          
+                          return (
+                            <div
+                              key={uniqueKey}
+                              onClick={() => toggleEmployeeSelection(uniqueKey)}
+                              style={{
+                                padding: '16px',
+                                backgroundColor: selectedEmployees.includes(uniqueKey) ? '#dcfce7' : '#f9fafb',
+                                border: `2px solid ${selectedEmployees.includes(uniqueKey) ? visableGreen : '#e5e7eb'}`,
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedEmployees.includes(uniqueKey)}
+                                  onChange={(e) => {
+                                    e.stopPropagation();
+                                    toggleEmployeeSelection(uniqueKey);
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer' }}
+                                />
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#111827', marginBottom: '4px' }}>
+                                    {employee.full_name || employee.name || 'Unknown'}
+                                  </div>
+                                  <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                                    {employee.job_title || employee.title || 'No title available'}
+                                  </div>
+                                  {employee.location && (
+                                    <div style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '4px' }}>
+                                      📍 {employee.location}
+                                    </div>
+                                  )}
+                                  {employee.linkedin && (
+                                    <a 
+                                      href={employee.linkedin} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      style={{ fontSize: '12px', color: '#3b82f6', textDecoration: 'none' }}
+                                    >
+                                      🔗 LinkedIn
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>
-                              {companyData.final_employees || companyData.wiza_company_size || companyData.ce_employees}
+                          );
+                        })}
+                      </div>
+
+                      {hasMoreEmployees && !isLoadingEmployees && (
+                        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                          <button
+                            onClick={loadMoreEmployees}
+                            style={{
+                              padding: '12px 32px',
+                              backgroundColor: visableGreen,
+                              color: 'white',
+                              borderRadius: '8px',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer',
+                              fontSize: '14px'
+                            }}
+                          >
+                            Load More Employees
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Revealed Contacts */}
+            {revealedContacts.length > 0 && (
+              <div id="revealed-contacts" style={{ marginTop: '32px' }}>
+                <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
+                  <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    🎉 Successfully Revealed ({revealedContacts.length})
+                  </h3>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {revealedContacts.map((contact, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          padding: '20px',
+                          backgroundColor: '#f0fdf4',
+                          border: '2px solid #86efac',
+                          borderRadius: '12px'
+                        }}
+                      >
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                          <div>
+                            <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#111827', marginBottom: '12px' }}>
+                              {contact.full_name}
                             </div>
-                            {companyData.final_employees && companyData.final_employees.includes('(estimated)') && (
-                              <div style={{ fontSize: '11px', color: '#ea580c', marginTop: '4px', fontWeight: '600' }}>
-                                🤖 AI Estimated
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Title:</strong> {contact.title || contact.job_title}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Email:</strong> {contact.revealed_data?.email || 'N/A'}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Phone:</strong> {contact.revealed_data?.mobile_phone || contact.revealed_data?.phone_number || 'N/A'}
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Location:</strong> {contact.location || 'N/A'}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Email Status:</strong> {contact.revealed_data?.email_status || 'N/A'}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                              <strong>Phone Status:</strong> {contact.revealed_data?.phone_status || 'N/A'}
+                            </div>
+                            {contact.revealed_data?.company_size && (
+                              <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                                <strong>Company Size:</strong> {contact.revealed_data.company_size}
                               </div>
                             )}
                           </div>
-                        )}
-
-                        {companyData.wiza_company_revenue_range && (
-                          <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                              <DollarSign style={{ width: '18px', height: '18px', color: '#6b7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Revenue</span>
-                            </div>
-                            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#111827' }}>
-                              {companyData.wiza_company_revenue_range}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* ICP Classification */}
-                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Target style={{ width: '24px', height: '24px', color: visableGreen }} />
-                        ICP Classification
-                      </h3>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>
-                            Industry {companyData.final_industry.includes(';') && '(Multiple)'}
-                          </div>
-                          <div style={{ padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#166534', lineHeight: '1.5' }}>
-                            {companyData.final_industry}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>
-                            Supplier Type {companyData.final_supplier_type.includes(';') && '(Multiple)'}
-                          </div>
-                          <div style={{ padding: '12px', backgroundColor: '#eff6ff', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#1e40af', lineHeight: '1.5' }}>
-                            {companyData.final_supplier_type}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>Distribution Area</div>
-                          <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#92400e' }}>
-                            {companyData.final_distribution_area}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '6px', fontWeight: '600' }}>Employee Range</div>
-                          <div style={{ padding: '12px', backgroundColor: '#f3e8ff', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#6b21a8' }}>
-                            {companyData.final_employees}
-                          </div>
                         </div>
                       </div>
-
-                      <div style={{ padding: '16px', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
-                        <div style={{ fontSize: '12px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
-                          Analysis Reasoning
-                        </div>
-                        <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.6' }}>
-                          {companyData.final_reason}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Keywords */}
-                    {companyData.ce_keywords && (
-                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
-                          Keywords
-                        </h3>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                          {companyData.ce_keywords.split(';').slice(0, 15).map((kw, idx) => (
-                            <span key={idx} style={{
-                              padding: '6px 12px', backgroundColor: '#f0fdf4', color: '#166534',
-                              borderRadius: '6px', fontSize: '13px', fontWeight: '500'
-                            }}>
-                              {kw.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Technologies */}
-                    {companyData.ce_technologies && (
-                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Zap style={{ width: '24px', height: '24px', color: visableGreen }} />
-                          Technology Stack
-                        </h3>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                          {companyData.ce_technologies.split(';').slice(0, 20).map((tech, idx) => (
-                            <span key={idx} style={{
-                              padding: '6px 12px', backgroundColor: '#eff6ff', color: '#1e40af',
-                              borderRadius: '6px', fontSize: '13px', fontWeight: '500'
-                            }}>
-                              {tech.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    ))}
                   </div>
 
-                  {/* Right Column */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    {/* Location */}
-                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MapPin style={{ width: '20px', height: '20px', color: visableGreen }} />
-                        Location
-                      </h3>
-                      <div style={{ fontSize: '14px', color: '#6b7280', lineHeight: '1.8' }}>
-                        {companyData.ce_city_name && (
-                          <div style={{ marginBottom: '8px' }}>
-                            <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_city_name}</div>
-                            {companyData.ce_state_name && <div>{companyData.ce_state_name}</div>}
-                          </div>
-                        )}
-                        {companyData.ce_country_name && (
-                          <div style={{ marginBottom: '8px' }}>
-                            <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.ce_country_name}</div>
-                            {companyData.wiza_company_region && <div>{companyData.wiza_company_region}</div>}
-                          </div>
-                        )}
-                        {companyData.ce_address && (
-                          <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
-                            <div>{companyData.ce_address}</div>
-                            {companyData.ce_postal_code && <div>{companyData.ce_postal_code}</div>}
-                            {companyData.ce_phone && <div style={{ marginTop: '8px', color: '#3b82f6' }}>{companyData.ce_phone}</div>}
-                          </div>
-                        )}
-                        {companyData.wiza_company_location && !companyData.ce_city_name && (
-                          <div style={{ fontWeight: '600', color: '#111827' }}>{companyData.wiza_company_location}</div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Funding */}
-                    {(companyData.ce_total_funding || companyData.wiza_company_funding) && (
-                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Award style={{ width: '20px', height: '20px', color: visableGreen }} />
-                          Funding
-                        </h3>
-                        <div style={{ marginBottom: '16px' }}>
-                          <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Total Funding</div>
-                          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
-                            {companyData.ce_total_funding || companyData.wiza_company_funding}
-                          </div>
-                        </div>
-                        {companyData.ce_funding_stage && (
-                          <div>
-                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Stage</div>
-                            <div style={{ padding: '8px 12px', backgroundColor: '#f0fdf4', borderRadius: '6px', fontSize: '14px', fontWeight: '600', color: '#166534', display: 'inline-block' }}>
-                              {companyData.ce_funding_stage}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Social Links */}
-                    {(companyData.ce_linkedin_url || companyData.ce_twitter_url || companyData.ce_facebook_url) && (
-                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>Social Profiles</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          {companyData.ce_linkedin_url && (
-                            <a href={companyData.ce_linkedin_url} target="_blank" rel="noopener noreferrer" style={{
-                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
-                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
-                            }}>
-                              <Linkedin style={{ width: '20px', height: '20px', color: '#0077b5' }} />
-                              <span style={{ fontSize: '14px', fontWeight: '500' }}>LinkedIn</span>
-                            </a>
-                          )}
-                          {companyData.ce_twitter_url && (
-                            <a href={companyData.ce_twitter_url} target="_blank" rel="noopener noreferrer" style={{
-                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
-                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
-                            }}>
-                              <Twitter style={{ width: '20px', height: '20px', color: '#1da1f2' }} />
-                              <span style={{ fontSize: '14px', fontWeight: '500' }}>Twitter</span>
-                            </a>
-                          )}
-                          {companyData.ce_facebook_url && (
-                            <a href={companyData.ce_facebook_url} target="_blank" rel="noopener noreferrer" style={{
-                              padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', display: 'flex',
-                              alignItems: 'center', gap: '12px', textDecoration: 'none', color: '#111827'
-                            }}>
-                              <Facebook style={{ width: '20px', height: '20px', color: '#4267b2' }} />
-                              <span style={{ fontSize: '14px', fontWeight: '500' }}>Facebook</span>
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Stock Info */}
-                    {companyData.ce_stock_symbol && (
-                      <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Globe style={{ width: '20px', height: '20px', color: visableGreen }} />
-                          Stock
-                        </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                          <div>
-                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Symbol</div>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_symbol}</div>
-                          </div>
-                          <div>
-                            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>Exchange</div>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827' }}>{companyData.ce_stock_exchange}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button
-                    onClick={() => searchEmployees()}
-                    disabled={isLoadingEmployees}
-                    style={{
-                      padding: '16px 32px', 
-                      backgroundColor: isLoadingEmployees ? '#d1d5db' : '#3b82f6', 
-                      color: 'white',
-                      borderRadius: '12px', 
-                      fontWeight: '600', 
-                      border: 'none', 
-                      cursor: isLoadingEmployees ? 'not-allowed' : 'pointer', 
-                      fontSize: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    {isLoadingEmployees ? (
-                      <>
-                        <Loader style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite' }} />
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        👥 Find Decision Makers
-                      </>
-                    )}
-                  </button>
-                  
-                  <button
-                    onClick={sendToLionel}
-                    style={{
-                      padding: '16px 32px', backgroundColor: visableGreen, color: 'white',
-                      borderRadius: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px'
-                    }}
-                  >
-                    📥 Download CSV for Lionel
-                  </button>
-                  
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(companyData, null, 2));
-                      alert('✓ Data copied!');
+                      const csvData = revealedContacts.map(c => ({
+                        Name: c.full_name,
+                        Title: c.title || c.job_title,
+                        Email: c.revealed_data?.email || '',
+                        Phone: c.revealed_data?.mobile_phone || c.revealed_data?.phone_number || '',
+                        Location: c.location || '',
+                        LinkedIn: c.linkedin || '',
+                        EmailStatus: c.revealed_data?.email_status || '',
+                        PhoneStatus: c.revealed_data?.phone_status || '',
+                        CompanySize: c.revealed_data?.company_size || ''
+                      }));
+                      
+                      const csv = [
+                        Object.keys(csvData[0]).join(','),
+                        ...csvData.map(row => Object.values(row).map(v => `"${v}"`).join(','))
+                      ].join('\n');
+                      
+                      const blob = new Blob([csv], { type: 'text/csv' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `revealed_contacts_${Date.now()}.csv`;
+                      a.click();
                     }}
                     style={{
-                      padding: '16px 32px', backgroundColor: 'white', color: '#111827',
-                      borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
+                      marginTop: '16px',
+                      padding: '12px 24px',
+                      backgroundColor: visableGreen,
+                      color: 'white',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '14px'
                     }}
                   >
-                    Copy Data
-                  </button>
-                  
-                  <button
-                    onClick={() => { 
-                      setCompanyData(null); 
-                      setDomain(''); 
-                      setApiErrors([]); 
-                      setEmployees([]); 
-                      setSelectedEmployees([]); 
-                      setRevealedContacts([]);
-                      setEmployeePage(1);
-                    }}
-                    style={{
-                      padding: '16px 32px', backgroundColor: 'white', color: '#6b7280',
-                      borderRadius: '12px', fontWeight: '600', border: '2px solid #e5e7eb', cursor: 'pointer', fontSize: '16px'
-                    }}
-                  >
-                    New Search
+                    📥 Export Contacts to CSV
                   </button>
                 </div>
-
-                {/* Employees List */}
-                {(employees.length > 0 || isLoadingEmployees) && (
-                  <div ref={employeesRef} style={{ marginTop: '32px' }}>
-                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                      
-                      {isLoadingEmployees && employees.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '48px 24px' }}>
-                          <Loader style={{ width: '48px', height: '48px', color: visableGreen, animation: 'spin 1s linear infinite', margin: '0 auto 24px' }} />
-                          <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
-                            🔍 Searching for Decision Makers...
-                          </h3>
-                          <p style={{ color: '#6b7280', fontSize: '16px' }}>
-                            Finding contacts at this company, please wait...
-                          </p>
-                        </div>
-                      ) : (
-                        <>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                            <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>
-                              👥 Decision Makers Found ({employees.length})
-                            </h3>
-                            <button
-                              onClick={revealSelectedEmployees}
-                              disabled={selectedEmployees.length === 0 || isLoadingEmployees}
-                              style={{
-                                padding: '12px 24px',
-                                backgroundColor: selectedEmployees.length > 0 && !isLoadingEmployees ? visableGreen : '#d1d5db',
-                                color: 'white',
-                                borderRadius: '8px',
-                                fontWeight: '600',
-                                border: 'none',
-                                cursor: selectedEmployees.length > 0 && !isLoadingEmployees ? 'pointer' : 'not-allowed',
-                                fontSize: '14px'
-                              }}
-                            >
-                              {isLoadingEmployees ? '⏳ Revealing...' : `🔓 Reveal Selected (${selectedEmployees.length})`}
-                            </button>
-                          </div>
-
-                          {progress && (
-                            <div style={{
-                              padding: '16px',
-                              backgroundColor: '#eff6ff',
-                              borderRadius: '12px',
-                              marginBottom: '20px',
-                              border: '2px solid #3b82f6'
-                            }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <Loader style={{ width: '24px', height: '24px', color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
-                                <div>
-                                  <div style={{ color: '#1e40af', fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>
-                                    Processing Contact Reveal
-                                  </div>
-                                  <div style={{ color: '#3b82f6', fontSize: '13px' }}>
-                                    {progress}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
-                            {employees.map((employee) => {
-                              const uniqueKey = employee.uniqueKey;
-                              
-                              return (
-                                <div
-                                  key={uniqueKey}
-                                  onClick={() => toggleEmployeeSelection(uniqueKey)}
-                                  style={{
-                                    padding: '16px',
-                                    backgroundColor: selectedEmployees.includes(uniqueKey) ? '#dcfce7' : '#f9fafb',
-                                    border: `2px solid ${selectedEmployees.includes(uniqueKey) ? visableGreen : '#e5e7eb'}`,
-                                    borderRadius: '12px',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s'
-                                  }}
-                                >
-                                  <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
-                                    <input
-                                      type="checkbox"
-                                      checked={selectedEmployees.includes(uniqueKey)}
-                                      onChange={(e) => {
-                                        e.stopPropagation();
-                                        toggleEmployeeSelection(uniqueKey);
-                                      }}
-                                      onClick={(e) => e.stopPropagation()}
-                                      style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer' }}
-                                    />
-                                    <div style={{ flex: 1 }}>
-                                      <div style={{ fontWeight: 'bold', fontSize: '16px', color: '#111827', marginBottom: '4px' }}>
-                                        {employee.full_name || employee.name || 'Unknown'}
-                                      </div>
-                                      <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                        {employee.job_title || employee.title || 'No title available'}
-                                      </div>
-                                      {employee.location && (
-                                        <div style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '4px' }}>
-                                          📍 {employee.location}
-                                        </div>
-                                      )}
-                                      {employee.linkedin && (
-                                        <a 
-                                          href={employee.linkedin} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer"
-                                          onClick={(e) => e.stopPropagation()}
-                                          style={{ fontSize: '12px', color: '#3b82f6', textDecoration: 'none' }}
-                                        >
-                                          🔗 LinkedIn
-                                        </a>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-
-                          {hasMoreEmployees && !isLoadingEmployees && (
-                            <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                              <button
-                                onClick={loadMoreEmployees}
-                                style={{
-                                  padding: '12px 32px',
-                                  backgroundColor: visableGreen,
-                                  color: 'white',
-                                  borderRadius: '8px',
-                                  fontWeight: '600',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  fontSize: '14px'
-                                }}
-                              >
-                                Load More Employees
-                              </button>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Revealed Contacts */}
-                {revealedContacts.length > 0 && (
-                  <div id="revealed-contacts" style={{ marginTop: '32px' }}>
-                    <div style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-                      <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        🎉 Successfully Revealed ({revealedContacts.length})
-                      </h3>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {revealedContacts.map((contact, idx) => (
-                          <div
-                            key={idx}
-                            style={{
-                              padding: '20px',
-                              backgroundColor: '#f0fdf4',
-                              border: '2px solid #86efac',
-                              borderRadius: '12px'
-                            }}
-                          >
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                              <div>
-                                <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#111827', marginBottom: '12px' }}>
-                                  {contact.full_name}
-                                </div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Title:</strong> {contact.title || contact.job_title}
-                                </div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Email:</strong> {contact.revealed_data?.email || 'N/A'}
-                                </div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Phone:</strong> {contact.revealed_data?.mobile_phone || contact.revealed_data?.phone_number || 'N/A'}
-                                </div>
-                              </div>
-                              <div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Location:</strong> {contact.location || 'N/A'}
-                                </div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Email Status:</strong> {contact.revealed_data?.email_status || 'N/A'}
-                                </div>
-                                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                                  <strong>Phone Status:</strong> {contact.revealed_data?.phone_status || 'N/A'}
-                                </div>
-                                {contact.revealed_data?.company_size && (
-                                  <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                                    <strong>Company Size:</strong> {contact.revealed_data.company_size}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          const csvData = revealedContacts.map(c => ({
-                            Name: c.full_name,
-                            Title: c.title || c.job_title,
-                            Email: c.revealed_data?.email || '',
-                            Phone: c.revealed_data?.mobile_phone || c.revealed_data?.phone_number || '',
-                            Location: c.location || '',
-                            LinkedIn: c.linkedin || '',
-                            EmailStatus: c.revealed_data?.email_status || '',
-                            PhoneStatus: c.revealed_data?.phone_status || '',
-                            CompanySize: c.revealed_data?.company_size || ''
-                          }));
-                          
-                          const csv = [
-                            Object.keys(csvData[0]).join(','),
-                            ...csvData.map(row => Object.values(row).map(v => `"${v}"`).join(','))
-                          ].join('\n');
-                          
-                          const blob = new Blob([csv], { type: 'text/csv' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `revealed_contacts_${Date.now()}.csv`;
-                          a.click();
-                        }}
-                        style={{
-                          marginTop: '16px',
-                          padding: '12px 24px',
-                          backgroundColor: visableGreen,
-                          color: 'white',
-                          borderRadius: '8px',
-                          fontWeight: '600',
-                          border: 'none',
-                          cursor: 'pointer',
-                          fontSize: '14px'
-                        }}
-                      >
-                        📥 Export to CSV
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </>
+              </div>
             )}
           </div>
         )}
@@ -2303,9 +1346,8 @@ RESPOND WITH ONLY THIS JSON FORMAT (no markdown, no backticks, no extra text):
   );
 }
 
-    // Render the app
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(ICPChecker));
+    root.render(React.createElement(CompanyEnrichment));
   </script>
 </body>
 </html>
